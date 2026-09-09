@@ -71,6 +71,21 @@ async function buildOne(path) {
     info(`사진 ${resolved.length}/${refs.length}장 포함`);
   }
 
+  // 종이에 인쇄된 QR 이 죽은 주소를 가리키면 되돌릴 방법이 없다. 미리 확인한다.
+  if (ws.audioUrl && ws.audioUrl !== ws.sourceUrl) {
+    try {
+      const res = await fetch(ws.audioUrl, { method: 'HEAD', redirect: 'follow' });
+      const type = res.headers.get('content-type') || '';
+      if (res.ok && /audio|octet-stream/i.test(type)) {
+        info(`음원 확인 · ${res.status} ${type}`);
+      } else {
+        info(`⚠ 음원 주소가 이상합니다 · ${res.status} ${type || '형식 없음'}`);
+      }
+    } catch (e) {
+      info(`⚠ 음원 주소를 확인하지 못했습니다: ${e.message}`);
+    }
+  }
+
   const made = {};
   for (const kind of Object.keys(KINDS)) {
     const htmlPath = join(OUT_DIR, `${ws.id}-${KINDS[kind].suffix}.html`);
