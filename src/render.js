@@ -114,14 +114,18 @@ function renderBlocks(blocks) {
     }
   }
 
-  const introText = intro.filter((b) => b.type === 'text').map((b) => `<p>${esc(b.text)}</p>`).join('\n');
-  const cover = intro.find((b) => b.type === 'image');
-
+  // 소제목이 없는 기사는 도입부가 곧 본문이다.
+  // 사진과 문단을 원문에 나온 순서 그대로 놓아야 흐름이 맞는다.
   const html = [];
-  if (introText) html.push(`<div class="lede">${introText}</div>`);
-  if (cover) {
-    html.push(`<figure class="cover"><img src="${cover.dataUri || cover.url}" alt="${esc(cover.alt)}">` +
-      (cover.alt ? `<figcaption>${esc(cover.alt)}</figcaption>` : '') + `</figure>`);
+  let firstText = true;
+  for (const b of intro) {
+    if (b.type === 'text') {
+      html.push(firstText ? `<div class="lede"><p>${esc(b.text)}</p></div>` : `<p>${esc(b.text)}</p>`);
+      firstText = false;
+    } else if (b.type === 'image') {
+      html.push(`<figure class="cover"><img src="${b.dataUri || b.url}" alt="${esc(b.alt)}">` +
+        (b.alt ? `<figcaption>${esc(b.alt)}</figcaption>` : '') + `</figure>`);
+    }
   }
   if (cards.length) {
     const cells = cards.map((c) => {

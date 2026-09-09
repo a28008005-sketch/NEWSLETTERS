@@ -6,30 +6,48 @@
   "date": "2026-04-30",
   "status": "완성",
   "sourceUrl": "https://www.timeforkids.com/k1/saving-sea-turtles/",
-  "audioUrl": "https://www.timeforkids.com/k1/saving-sea-turtles/",
+  "audioUrl": "https://audio.emagazines.com/readalong_329580_5ad2af71-f40c-4dce-8d00-02297bf730df.mp3",
   "note": "Grace Buschiazzo - South Carolina Aquarium, Sea Turtle Care Center",
+  "display": {
+    "date": false,
+    "credit": false
+  },
   "article": {
-    "paragraphs": [
-      "Grace Buschiazzo (above) is a marine biologist. She works at the South Carolina Aquarium. She is part of its Sea Turtle Care Center.",
-      "Sea turtles can get sick. They can get hurt. The team at the care center treats them.",
-      "This turtle is getting scanned. It has to be strong and healthy. Then it can go back to the sea.",
-      "Another turtle swallowed fishing line. Doctors did surgery. They removed it. The turtle was saved."
-    ],
-    "images": [
+    "blocks": [
       {
+        "type": "image",
         "url": "https://www.timeforkids.com/wp-content/uploads/2024/10/G3G5_241018_cover_hero.jpg?w=1024",
         "alt": ""
       },
       {
-        "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260508_trip_to_the_doctor.jpg?w=1024",
-        "alt": ""
+        "type": "text",
+        "text": "Grace Buschiazzo (above) is a marine biologist. She works at the South Carolina Aquarium. She is part of its Sea Turtle Care Center."
       },
       {
-        "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260508_good_as_new.jpg?w=1024",
-        "alt": ""
+        "type": "heading",
+        "text": "Turtle Rescue"
+      },
+      {
+        "type": "text",
+        "text": "Sea turtles can get sick. They can get hurt. The team at the care center treats them."
+      },
+      {
+        "type": "heading",
+        "text": "A Trip to the Doctor"
+      },
+      {
+        "type": "text",
+        "text": "This turtle is getting scanned. It has to be strong and healthy. Then it can go back to the sea."
+      },
+      {
+        "type": "heading",
+        "text": "Good as New"
+      },
+      {
+        "type": "text",
+        "text": "Another turtle swallowed fishing line. Doctors did surgery. They removed it. The turtle was saved."
       }
-    ],
-    "credit": "출처: TIME for Kids, \"Saving Sea Turtles\" (https://www.timeforkids.com/k1/saving-sea-turtles/)"
+    ]
   },
   "vocabulary": [
     {

@@ -6,39 +6,76 @@
   "date": "2026-04-30",
   "status": "완성",
   "sourceUrl": "https://www.timeforkids.com/k1/meet-sea-turtles-k1/",
-  "audioUrl": "https://www.timeforkids.com/k1/meet-sea-turtles-k1/",
+  "audioUrl": "https://audio.emagazines.com/readalong_364403_2c351c92-f35e-4ca4-bb0e-b432114c61e8.mp3",
   "note": "7종류의 바다거북이를 소개하는 기사",
+  "display": {
+    "date": false,
+    "credit": false
+  },
   "article": {
-    "paragraphs": [
-      "There are seven species of sea turtles. Each species has a shell for protection. Each species has strong flippers for swimming. Learn more about sea turtles.",
-      "This sea turtle is chasing a jellyfish. Some sea turtles also eat plants. They eat seaweed and algae.",
-      "Sea turtles live in the water. But they lay eggs on land. Baby turtles hurry to the ocean when they hatch.",
-      "Sea turtles have good eyesight. They can see in dark water. And they can see colors. Their eyesight helps them hunt.",
-      "There is trash in the ocean. That is a problem for turtles. See this bag? A turtle might think it is food."
-    ],
-    "images": [
+    "blocks": [
       {
+        "type": "image",
         "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260508_cover_hero.jpg?w=1024",
         "alt": "A sea turtle swimming in blue water"
       },
       {
+        "type": "text",
+        "text": "There are seven species of sea turtles. Each species has a shell for protection. Each species has strong flippers for swimming. Learn more about sea turtles."
+      },
+      {
+        "type": "heading",
+        "text": "Turtle Diet"
+      },
+      {
+        "type": "image",
         "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260508_turtle_diet.jpg?w=1024",
         "alt": ""
       },
       {
+        "type": "text",
+        "text": "This sea turtle is chasing a jellyfish. Some sea turtles also eat plants. They eat seaweed and algae."
+      },
+      {
+        "type": "heading",
+        "text": "A Long Journey"
+      },
+      {
+        "type": "image",
         "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260508_long_journey.jpg?w=1024",
         "alt": ""
       },
       {
+        "type": "text",
+        "text": "Sea turtles live in the water. But they lay eggs on land. Baby turtles hurry to the ocean when they hatch."
+      },
+      {
+        "type": "heading",
+        "text": "Sharp Eyes"
+      },
+      {
+        "type": "image",
         "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260508_sharp_eyes.jpg?w=1024",
         "alt": ""
       },
       {
+        "type": "text",
+        "text": "Sea turtles have good eyesight. They can see in dark water. And they can see colors. Their eyesight helps them hunt."
+      },
+      {
+        "type": "heading",
+        "text": "Turtles in Trouble"
+      },
+      {
+        "type": "image",
         "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260508_turtles_in_trouble.jpg?w=1024",
         "alt": ""
+      },
+      {
+        "type": "text",
+        "text": "There is trash in the ocean. That is a problem for turtles. See this bag? A turtle might think it is food."
       }
-    ],
-    "credit": "출처: TIME for Kids, \"Meet Sea Turtles\" (https://www.timeforkids.com/k1/meet-sea-turtles-k1/)"
+    ]
   },
   "vocabulary": [
     {
