@@ -3,7 +3,7 @@ name: 워크시트 Notion 발행
 # data/worksheets 안의 JSON 이 바뀌면 PDF 를 만들어 Notion 에 자동으로 붙인다.
 on:
   push:
-    branches: [main, 'claude/**']
+    branches: [main]
     paths: ['data/worksheets/**.json', 'templates/**', 'src/**']
   workflow_dispatch:
     inputs:
