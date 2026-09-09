@@ -11,6 +11,7 @@ import { render, KINDS } from './render.js';
 import { htmlToPdf } from './pdf.js';
 import { findChrome } from './chrome.js';
 import * as notion from './notion.js';
+import { fetchArticle, writeDraft } from './fetch.js';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DATA_DIR = join(ROOT, 'data', 'worksheets');
@@ -157,6 +158,31 @@ async function cmdDoctor() {
   process.exitCode = fail === 0 ? 0 : 1;
 }
 
+// ---------- fetch ----------
+// 기사 URL 에서 본문을 받아 초안 JSON 을 만든다.
+// 문항은 사람이 채워야 하므로 drafts/ 에 두고, build/publish 대상에는 넣지 않는다.
+async function cmdFetch(url) {
+  if (!url) throw new Error('기사 URL 을 함께 적어주세요. 예) node src/cli.js fetch https://...');
+
+  const article = await fetchArticle(url);
+  const draftDir = join(ROOT, 'drafts');
+  const path = writeDraft(article, draftDir);
+
+  ok(`본문을 받았습니다 · 문단 ${article.paragraphs.length}개 (추출 경로: ${article.via})`);
+  info(`제목: ${article.headline}`);
+  info(`레벨 추정: ${article.level || '알 수 없음 (직접 지정 필요)'}`);
+  info(`초안 파일: ${path}`);
+
+  // 추출이 제대로 됐는지 사람이 눈으로 확인할 수 있도록 그대로 출력한다.
+  console.log('\n───────── 받아온 본문 ─────────');
+  console.log(article.headline);
+  console.log('');
+  article.paragraphs.forEach((para, i) => console.log(`[${i + 1}] ${para}\n`));
+  console.log('──────────────────────────────');
+  console.log('\n본문이 이상하면 초안을 고쳐 주세요. 문항과 단어를 채운 뒤');
+  console.log('data/worksheets/ 로 옮기면 publish 대상이 됩니다.\n');
+}
+
 // ---------- verify ----------
 // 노션 쪽 연결을 끝까지 확인한다.
 // 업로드까지 실제로 해보되, 어디에도 붙이지 않는다.
@@ -226,11 +252,11 @@ async function cmdVerify() {
 
 // ---------- 진입점 ----------
 const [cmd, arg] = process.argv.slice(2);
-const run = { doctor: cmdDoctor, verify: cmdVerify, build: cmdBuild, publish: cmdPublish }[cmd];
+const run = { doctor: cmdDoctor, verify: cmdVerify, fetch: cmdFetch, build: cmdBuild, publish: cmdPublish }[cmd];
 if (!run) {
   console.log(`사용법:
   node src/cli.js doctor              환경 점검 (Chrome·Notion 토큰·JSON 검사)\n  node src/cli.js verify              Notion 연결과 업로드까지 실제로 확인 (아무것도 첨부하지 않음)
-  node src/cli.js build   [경로|all]  PDF 3종 생성 (Notion 없이도 동작)
+  node src/cli.js fetch   <기사 URL>  기사 본문을 받아 초안 JSON 생성 (drafts/)\n  node src/cli.js build   [경로|all]  PDF 3종 생성 (Notion 없이도 동작)
   node src/cli.js publish [경로|all]  생성 + Notion 파일 속성에 첨부`);
   process.exit(1);
 }
