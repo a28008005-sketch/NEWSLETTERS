@@ -64,10 +64,18 @@ async function buildOne(path) {
   mkdirSync(OUT_DIR, { recursive: true });
 
   // 사진은 만들 때 받아온다. 못 받으면 그 사진만 빠지고 나머지는 그대로 나온다.
-  const refs = ws.article?.images || [];
+  const blockImages = (ws.article?.blocks || []).filter((b) => b.type === 'image');
+  const refs = blockImages.length ? blockImages : ws.article?.images || [];
   if (refs.length) {
     const resolved = await inlineImages(refs, { log: (m) => info(m) });
-    ws.article.images = resolved;
+    if (blockImages.length) {
+      // 순서를 지켜야 소제목과 사진 짝이 맞는다. 주소로 찾아 붙인다.
+      const byUrl = new Map(resolved.map((r) => [r.source, r.dataUri]));
+      for (const b of blockImages) b.dataUri = byUrl.get(b.url);
+      ws.article.blocks = ws.article.blocks.filter((b) => b.type !== 'image' || b.dataUri);
+    } else {
+      ws.article.images = resolved;
+    }
     info(`사진 ${resolved.length}/${refs.length}장 포함`);
   }
 

@@ -106,6 +106,49 @@ function headlineOf(html) {
   return t ? stripTags(t[1]).replace(/\s*[|\-–]\s*[^|\-–]*$/, '').trim() : '';
 }
 
+// ---------- 본문 구조 ----------
+// 지금까지는 문단만 뽑아서 소제목을 통째로 잃어버렸다.
+// 음원은 소제목까지 읽어 주기 때문에, 종이에도 그대로 있어야 아이가 따라갈 수 있다.
+// 그래서 소제목·문단·사진을 원문에 나온 순서대로 모은다.
+function bodyBlocks(region, baseUrl) {
+  const out = [];
+  const seenImg = new Set();
+  const re = /<(h[1-4])\b[^>]*>([\s\S]*?)<\/\1>|<p\b[^>]*>([\s\S]*?)<\/p>|<img\b[^>]*>/gi;
+
+  for (const m of region.matchAll(re)) {
+    const [tag] = m;
+
+    if (m[1]) {
+      const text = stripTags(m[2]);
+      // 한 줄짜리 소제목만 받는다. 긴 것은 본문이거나 배너다.
+      if (text && text.length <= 70 && !NOISE.test(text)) out.push({ type: 'heading', text });
+      continue;
+    }
+
+    if (m[3] !== undefined) {
+      const text = stripTags(m[3]);
+      if (usable(text)) out.push({ type: 'text', text });
+      continue;
+    }
+
+    const srcset = tag.match(/\bsrcset=["']([^"']+)["']/i);
+    const src = tag.match(/\bsrc=["']([^"']+)["']/i);
+    const raw = (srcset && bestFromSrcset(srcset[1])) || (src && src[1]);
+    if (!raw || raw.startsWith('data:') || IMG_NOISE.test(raw)) continue;
+    let abs;
+    try {
+      abs = new URL(raw, baseUrl).toString();
+    } catch {
+      continue;
+    }
+    if (seenImg.has(abs)) continue;
+    seenImg.add(abs);
+    const alt = tag.match(/\balt=["']([^"']*)["']/i);
+    out.push({ type: 'image', url: abs, alt: alt ? decode(alt[1]).trim() : '' });
+  }
+  return out;
+}
+
 // ---------- 사진 ----------
 // 로고, 아이콘, 추적용 1px 이미지처럼 본문 사진이 아닌 것들을 걸러낸다.
 const IMG_NOISE = /(logo|icon|sprite|avatar|placeholder|pixel|spacer|1x1|badge|favicon)/i;
@@ -246,6 +289,13 @@ export async function fetchArticle(url, { log = () => {} } = {}) {
   const images = sameArticleOnly(imageRefs(html, url)).slice(0, 6);
   const audio = await resolveAudio(html, url, log);
 
+  // 소제목까지 살린 순서 그대로의 본문. 사진은 기사 것만 남긴다.
+  const scope = html.match(/<article\b[^>]*>([\s\S]*?)<\/article>/i)
+    || html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i);
+  const keep = new Set(images.map((i) => i.url));
+  const blocks = bodyBlocks(bodyOnly(scope ? scope[1] : html), url)
+    .filter((b) => b.type !== 'image' || keep.has(b.url));
+
   return {
     slug: slugOf(url),
     headline: found.headline || headlineOf(html),
@@ -253,6 +303,7 @@ export async function fetchArticle(url, { log = () => {} } = {}) {
     level,
     via: found.via,
     images,
+    blocks,
     audio,
     url,
   };
@@ -271,6 +322,7 @@ export function draftFrom(article) {
     note: '',
     audioUrl: article.audio.url,
     article: {
+      blocks: article.blocks || [],
       paragraphs: article.paragraphs,
       images: article.images || [],
       credit: `출처: ${article.url}`,

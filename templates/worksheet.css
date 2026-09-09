@@ -145,3 +145,28 @@ figure.hero figcaption { text-align: center; }
 .shot-grid { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 12px; }
 .shot-grid figure.shot { flex: 1 1 45%; }
 .shot-grid figure.shot img { max-height: 40mm; object-fit: cover; }
+
+/* ---------- 원문 기사 레이아웃 ---------- */
+/* 원문은 사진마다 소제목과 짧은 설명이 붙는 잡지 구성이다.
+   음원도 소제목을 읽어 주므로 종이에서도 같은 덩어리로 보여야 따라갈 수 있다. */
+.lede { font-size: 12pt; line-height: 1.6; margin: 0 0 11px; }
+.lede p { margin: 0 0 7px; }
+
+figure.cover { margin: 0 0 14px; }
+figure.cover img {
+  display: block; width: 100%; max-height: 68mm; object-fit: cover;
+  border-radius: 5px; border: 1px solid var(--line);
+}
+figure.cover figcaption { margin-top: 4px; font-size: 8.5pt; color: var(--muted); }
+
+.sections { display: flex; flex-wrap: wrap; gap: 11px 13px; }
+.sections .card { flex: 1 1 46%; min-width: 0; break-inside: avoid; }
+.sections .card h3 {
+  margin: 0 0 5px; font-size: 11.5pt; color: var(--accent);
+  letter-spacing: -.01em;
+}
+.sections .card img {
+  display: block; width: 100%; max-height: 42mm; object-fit: cover;
+  border-radius: 4px; border: 1px solid var(--line); margin-bottom: 5px;
+}
+.sections .card p { margin: 0; font-size: 10.5pt; line-height: 1.55; }

@@ -90,8 +90,60 @@ async function listenStrip(ws) {
 </div>`;
 }
 
+/**
+ * 소제목·문단·사진을 원문 순서대로 받아 잡지처럼 조판한다.
+ * 첫 소제목 앞은 도입부와 표지 사진, 그 뒤는 소제목마다 한 덩어리.
+ */
+function renderBlocks(blocks) {
+  const intro = [];
+  const cards = [];
+  let current = null;
+
+  for (const b of blocks) {
+    if (b.type === 'heading') {
+      current = { heading: b.text, image: null, texts: [] };
+      cards.push(current);
+      continue;
+    }
+    if (!current) {
+      intro.push(b);
+    } else if (b.type === 'image' && !current.image) {
+      current.image = b;
+    } else if (b.type === 'text') {
+      current.texts.push(b.text);
+    }
+  }
+
+  const introText = intro.filter((b) => b.type === 'text').map((b) => `<p>${esc(b.text)}</p>`).join('\n');
+  const cover = intro.find((b) => b.type === 'image');
+
+  const html = [];
+  if (introText) html.push(`<div class="lede">${introText}</div>`);
+  if (cover) {
+    html.push(`<figure class="cover"><img src="${cover.dataUri || cover.url}" alt="${esc(cover.alt)}">` +
+      (cover.alt ? `<figcaption>${esc(cover.alt)}</figcaption>` : '') + `</figure>`);
+  }
+  if (cards.length) {
+    const cells = cards.map((c) => {
+      const img = c.image ? `<img src="${c.image.dataUri || c.image.url}" alt="${esc(c.image.alt)}">` : '';
+      const body = c.texts.map((t) => `<p>${esc(t)}</p>`).join('\n');
+      return `<div class="card"><h3>${esc(c.heading)}</h3>${img}${body}</div>`;
+    });
+    html.push(`<div class="sections">${cells.join('\n')}</div>`);
+  }
+  return html.join('\n');
+}
+
 async function renderArticle(ws) {
   const a = ws.article || {};
+
+  // 소제목까지 있는 새 방식. 없으면 예전 방식 그대로 그린다.
+  if (a.blocks?.length) {
+    const credit = show(ws).credit && a.credit ? `<p class="credit">${esc(a.credit)}</p>` : '';
+    return page(ws, 'article', (await listenStrip(ws)) +
+      `<section class="article">\n${renderBlocks(a.blocks)}\n${credit}\n</section>`);
+  }
+
   const paragraphs = a.paragraphs || [];
   const images = a.images || [];
 
