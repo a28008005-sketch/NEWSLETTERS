@@ -89,15 +89,23 @@ export async function sniffAudio(pageUrl, { waitMs = 9000, log = () => {} } = {}
     const send = (method, params = {}, sessionId) =>
       ws.send(JSON.stringify({ id: ++id, method, params, ...(sessionId ? { sessionId } : {}) }));
 
-    let sessionId = null;
+    // 재생기가 iframe 안에 있는 경우가 있어 붙는 세션을 모두 들고 있어야 한다.
+    const sessions = new Set();
+    let pageSession = null;
     ws.onmessage = (ev) => {
       const msg = JSON.parse(ev.data);
 
       if (msg.method === 'Target.attachedToTarget') {
-        sessionId = msg.params.sessionId;
-        send('Network.enable', {}, sessionId);
-        send('Page.enable', {}, sessionId);
-        send('Page.navigate', { url: pageUrl }, sessionId);
+        const sid = msg.params.sessionId;
+        sessions.add(sid);
+        send('Network.enable', {}, sid);
+        send('Page.enable', {}, sid);
+        if (!pageSession) {
+          pageSession = sid;
+          send('Page.navigate', { url: pageUrl }, sid);
+        } else {
+          log(`하위 프레임 감지: ${msg.params.targetInfo?.url || '(주소 없음)'}`);
+        }
         return;
       }
       const p = msg.params || {};
@@ -110,8 +118,10 @@ export async function sniffAudio(pageUrl, { waitMs = 9000, log = () => {} } = {}
         addByMime(p.response?.url, p.response?.mimeType);
         note(p.response?.url);
       }
-      // 버튼을 눌러 본 결과를 그대로 남긴다. 실패했을 때 원인을 보려면 필요하다.
-      if (msg.result?.result?.value) log(`페이지에서 찾은 것: ${msg.result.result.value}`);
+      // 버튼을 눌러 본 결과를 그대로 남긴다. 아무것도 못 찾았다는 사실도 단서다.
+      if (msg.result?.result && 'value' in msg.result.result) {
+        log(`프레임 조사 결과: ${msg.result.result.value || '(해당 요소 없음)'}`);
+      }
     };
 
     send('Target.setAutoAttach', { autoAttach: true, waitForDebuggerOnStart: false, flatten: true });
@@ -119,8 +129,9 @@ export async function sniffAudio(pageUrl, { waitMs = 9000, log = () => {} } = {}
 
     await sleep(waitMs);
 
-    // 재생 버튼을 눌러야 파일을 받아오는 경우가 있다. 있으면 눌러 본다.
-    if (sessionId) {
+    // 재생 버튼을 눌러야 파일을 받아오는 경우가 있다.
+    // 최상위 문서와 모든 하위 프레임에서 눌러 본다.
+    for (const sid of sessions) {
       send('Runtime.evaluate', {
         expression: `(() => {
           const hit = [];
@@ -129,12 +140,13 @@ export async function sniffAudio(pageUrl, { waitMs = 9000, log = () => {} } = {}
             if (/listen|audio|play/.test(label)) { try { el.click(); hit.push(label.trim().slice(0, 40)); } catch (e) {} }
           }
           for (const a of document.querySelectorAll('audio, audio source')) { if (a.src) hit.push('SRC:' + a.src); }
+          for (const f of document.querySelectorAll('iframe')) { if (f.src) hit.push('IFRAME:' + f.src); }
           return hit.slice(0, 12).join(' | ');
         })()`,
         returnByValue: true,
-      }, sessionId);
-      await sleep(6000);
+      }, sid);
     }
+    await sleep(9000);
   } finally {
     try { ws?.close(); } catch {}
     proc.kill('SIGKILL');
