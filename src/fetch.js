@@ -271,11 +271,15 @@ async function resolveAudio(html, baseUrl, log = () => {}) {
   const inHtml = audioUrl(html, baseUrl);
   if (inHtml) return { url: inHtml.url, found: true, via: 'HTML' };
 
-  try {
-    const sniffed = await sniffAudio(baseUrl, { log });
-    if (sniffed.length) return { url: sniffed[0], found: true, via: '브라우저 통신' };
-  } catch (e) {
-    log(`음원 탐색 실패: ${e.message}`);
+  // 재생기가 늦게 뜨면 한 번에 못 잡는다. 다섯 기사 중 둘만 잡힌 적이 있어 한 번 더 본다.
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      const sniffed = await sniffAudio(baseUrl, { log, waitMs: attempt === 1 ? 9000 : 14000 });
+      if (sniffed.length) return { url: sniffed[0], found: true, via: `브라우저 통신 (${attempt}회차)` };
+    } catch (e) {
+      log(`음원 탐색 실패 (${attempt}회차): ${e.message}`);
+    }
+    if (attempt === 1) log('음원을 못 잡아 한 번 더 시도합니다.');
   }
   return { url: baseUrl, found: false, via: '없음 (기사 주소로 대체)' };
 }
