@@ -1,0 +1,58 @@
+name: 워크시트 빌드 점검
+
+# 노션 토큰 없이도 도는 검사.
+# 깨끗한 기계에서 JSON 검사와 PDF 생성이 실제로 되는지 매번 확인한다.
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 한글 글꼴 설치
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-nanum
+          sudo fc-cache -f
+
+      - name: Chrome 확인
+        run: |
+          if command -v google-chrome >/dev/null 2>&1; then
+            echo "CHROME_PATH=$(command -v google-chrome)" >> "$GITHUB_ENV"
+          elif command -v chromium-browser >/dev/null 2>&1; then
+            echo "CHROME_PATH=$(command -v chromium-browser)" >> "$GITHUB_ENV"
+          else
+            sudo apt-get install -y -qq chromium-browser
+            echo "CHROME_PATH=$(command -v chromium-browser)" >> "$GITHUB_ENV"
+          fi
+          echo "사용할 Chrome: $CHROME_PATH"
+          "$CHROME_PATH" --version || true
+
+      - name: PDF 생성
+        run: node src/cli.js build all
+
+      - name: 결과물이 실제로 나왔는지 검사
+        run: |
+          count=$(ls out/*.pdf 2>/dev/null | wc -l)
+          echo "생성된 PDF: ${count}개"
+          if [ "$count" -eq 0 ]; then
+            echo "PDF 가 하나도 만들어지지 않았습니다."
+            exit 1
+          fi
+          for f in out/*.pdf; do
+            head -c 4 "$f" | grep -q '%PDF' || { echo "$f 가 올바른 PDF 가 아닙니다"; exit 1; }
+            echo "  OK  $f  ($(du -h "$f" | cut -f1))"
+          done
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: worksheet-pdfs
+          path: out/*.pdf
