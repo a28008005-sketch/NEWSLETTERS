@@ -34,7 +34,14 @@ function loadWorksheet(path) {
   if (!ws.title) errs.push('title 이 없습니다 (Notion 행 제목과 정확히 같아야 합니다)');
   if (ws.level && !LEVELS.includes(ws.level)) errs.push(`level 은 ${LEVELS.join(' / ')} 중 하나여야 합니다`);
   if (ws.topic && !TOPICS.includes(ws.topic)) errs.push(`topic 이 Notion 선택지에 없습니다: ${ws.topic}`);
-  if (!ws.article?.paragraphs?.length) errs.push('article.paragraphs 가 비어 있습니다');
+  const hasBlocks = ws.article?.blocks?.length;
+  const hasParagraphs = ws.article?.paragraphs?.length;
+  if (!hasBlocks && !hasParagraphs) {
+    errs.push('본문이 비어 있습니다 (article.blocks 또는 article.paragraphs 가 필요합니다)');
+  }
+  if (hasBlocks && !ws.article.blocks.some((b) => b.type === 'text')) {
+    errs.push('article.blocks 에 문단이 하나도 없습니다');
+  }
   (ws.questions || []).forEach((q, i) => {
     if (q.type === 'mc' && (q.answer == null || !q.choices?.[q.answer])) {
       errs.push(`questions[${i}] 객관식의 answer 가 choices 범위를 벗어납니다`);

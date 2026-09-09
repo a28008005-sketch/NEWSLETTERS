@@ -149,6 +149,19 @@ function bodyBlocks(region, baseUrl) {
   return out;
 }
 
+/**
+ * 본문 앞뒤에 붙는 것들을 잘라낸다.
+ * 앞: 사진이나 문단이 나오기 전의 제목들은 기사 제목·발행일·발행처다.
+ * 뒤: 마지막 문단 뒤에 남는 것은 다른 기사 목록이다.
+ */
+function trimBlocks(blocks) {
+  let start = 0;
+  while (start < blocks.length && blocks[start].type === 'heading') start++;
+  let end = blocks.length;
+  while (end > start && blocks[end - 1].type !== 'text') end--;
+  return blocks.slice(start, end);
+}
+
 // ---------- 사진 ----------
 // 로고, 아이콘, 추적용 1px 이미지처럼 본문 사진이 아닌 것들을 걸러낸다.
 const IMG_NOISE = /(logo|icon|sprite|avatar|placeholder|pixel|spacer|1x1|badge|favicon)/i;
@@ -293,8 +306,10 @@ export async function fetchArticle(url, { log = () => {} } = {}) {
   const scope = html.match(/<article\b[^>]*>([\s\S]*?)<\/article>/i)
     || html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i);
   const keep = new Set(images.map((i) => i.url));
-  const blocks = bodyBlocks(bodyOnly(scope ? scope[1] : html), url)
-    .filter((b) => b.type !== 'image' || keep.has(b.url));
+  const blocks = trimBlocks(
+    bodyBlocks(bodyOnly(scope ? scope[1] : html), url)
+      .filter((b) => b.type !== 'image' || keep.has(b.url))
+  );
 
   return {
     slug: slugOf(url),

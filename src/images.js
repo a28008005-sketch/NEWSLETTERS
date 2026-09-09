@@ -17,7 +17,9 @@ export async function inlineImages(refs = [], { log = () => {} } = {}) {
 
   for (const ref of refs) {
     if (ref.dataUri) {
-      kept.push(ref);
+      // 이미 담겨 있는 사진도 원래 주소를 함께 돌려줘야
+      // 호출한 쪽에서 어느 자리의 사진인지 찾을 수 있다.
+      kept.push({ ...ref, source: ref.source || ref.url });
       continue;
     }
     try {
