@@ -1,0 +1,52 @@
+name: 워크시트 Notion 발행
+
+# data/worksheets 안의 JSON 이 바뀌면 PDF 를 만들어 Notion 에 자동으로 붙인다.
+on:
+  push:
+    branches: [main]
+    paths: ['data/worksheets/**.json', 'templates/**', 'src/**']
+  workflow_dispatch:
+    inputs:
+      target:
+        description: '발행할 대상 (파일 경로 또는 all)'
+        required: false
+        default: 'all'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # 한글이 깨지지 않도록 나눔 글꼴을 깔아준다
+      - name: 한글 글꼴 설치
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-nanum
+          sudo fc-cache -f
+
+      - name: 환경 점검
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: ${{ vars.NOTION_DATABASE_ID }}
+        run: node src/cli.js doctor
+
+      - name: PDF 생성 및 Notion 첨부
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: ${{ vars.NOTION_DATABASE_ID }}
+          CREATE_MISSING_ROWS: '1'
+        run: node src/cli.js publish "${{ github.event.inputs.target || 'all' }}"
+
+      # Notion 업로드가 실패해도 PDF 는 받아볼 수 있게 남긴다
+      - name: PDF 보관
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: worksheet-pdfs
+          path: out/*.pdf
+          if-no-files-found: ignore

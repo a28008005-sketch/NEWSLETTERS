@@ -1,0 +1,13 @@
+{
+  "name": "newsletters-worksheet-pipeline",
+  "version": "1.0.0",
+  "description": "영자신문 워크시트 자동화: JSON -> HTML -> PDF(헤드리스 Chrome) -> Notion 파일 속성 첨부",
+  "type": "module",
+  "private": true,
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "doctor": "node src/cli.js doctor",
+    "build": "node src/cli.js build",
+    "publish": "node src/cli.js publish"
+  }
+}
