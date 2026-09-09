@@ -16,6 +16,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: npm
+
+      - name: 의존성 설치
+        run: npm ci
 
       - name: 한글 글꼴 설치
         run: |

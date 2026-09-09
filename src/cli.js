@@ -12,6 +12,7 @@ import { htmlToPdf } from './pdf.js';
 import { findChrome } from './chrome.js';
 import * as notion from './notion.js';
 import { fetchArticle, writeDraft } from './fetch.js';
+import { inlineImages } from './images.js';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DATA_DIR = join(ROOT, 'data', 'worksheets');
@@ -61,11 +62,20 @@ function targets(arg) {
 async function buildOne(path) {
   const ws = loadWorksheet(path);
   mkdirSync(OUT_DIR, { recursive: true });
+
+  // 사진은 만들 때 받아온다. 못 받으면 그 사진만 빠지고 나머지는 그대로 나온다.
+  const refs = ws.article?.images || [];
+  if (refs.length) {
+    const resolved = await inlineImages(refs, { log: (m) => info(m) });
+    ws.article.images = resolved;
+    info(`사진 ${resolved.length}/${refs.length}장 포함`);
+  }
+
   const made = {};
   for (const kind of Object.keys(KINDS)) {
     const htmlPath = join(OUT_DIR, `${ws.id}-${KINDS[kind].suffix}.html`);
     const pdfPath = join(OUT_DIR, `${ws.id}-${KINDS[kind].suffix}.pdf`);
-    writeFileSync(htmlPath, render(ws, kind), 'utf8');
+    writeFileSync(htmlPath, await render(ws, kind), 'utf8');
     await htmlToPdf(htmlPath, pdfPath);
     made[KINDS[kind].key] = pdfPath;
     info(`${basename(pdfPath)}  (${(statSync(pdfPath).size / 1024).toFixed(0)} KB)`);
@@ -231,7 +241,7 @@ async function cmdVerify() {
       mkdirSync(OUT_DIR, { recursive: true });
       const htmlPath = join(OUT_DIR, `${ws.id}-verify.html`);
       const pdfPath = join(OUT_DIR, `${ws.id}-verify.pdf`);
-      writeFileSync(htmlPath, render(ws, 'worksheet'), 'utf8');
+      writeFileSync(htmlPath, await render(ws, 'worksheet'), 'utf8');
       await htmlToPdf(htmlPath, pdfPath);
       const up = await notion.uploadFile(pdfPath);
       ok(`파일 업로드 성공 · ${up.filename} (id ${up.id})`);

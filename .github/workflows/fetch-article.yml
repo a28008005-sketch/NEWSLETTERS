@@ -8,6 +8,9 @@ on:
     branches: ['claude/**']
     paths: ['data/pending-urls.txt', 'src/fetch.js']
 
+permissions:
+  contents: write
+
 jobs:
   fetch:
     runs-on: ubuntu-latest
@@ -17,6 +20,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: npm
+
+      - name: 의존성 설치
+        run: npm ci
 
       - name: 목록에 적힌 기사 받아오기
         run: |
@@ -32,6 +39,23 @@ jobs:
             echo "=============================================="
             node src/cli.js fetch "$url"
           done < /tmp/urls.txt
+
+      # 초안을 브랜치에 올려 둔다. 그래야 사람이 문항을 채워 넣을 수 있다.
+      - name: 초안 커밋
+        run: |
+          if [ -z "$(ls -A drafts 2>/dev/null)" ]; then
+            echo "커밋할 초안이 없습니다."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add drafts/
+          if git diff --cached --quiet; then
+            echo "초안에 바뀐 내용이 없습니다."
+            exit 0
+          fi
+          git commit -m "Update article drafts fetched from the source pages"
+          git push origin HEAD:${GITHUB_REF_NAME}
 
       - name: 초안 보관
         if: always()

@@ -2,6 +2,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { qrSvg } from './qr.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const CSS = readFileSync(join(HERE, '..', 'templates', 'worksheet.css'), 'utf8');
@@ -62,14 +63,46 @@ ${foot(ws, kind)}
 }
 
 // ---------- 원문 ----------
-function renderArticle(ws) {
+function figure(img, cls = 'shot') {
+  const caption = img.alt ? `<figcaption>${esc(img.alt)}</figcaption>` : '';
+  return `<figure class="${cls}"><img src="${img.dataUri}" alt="${esc(img.alt)}">${caption}</figure>`;
+}
+
+/** 음원 QR 띠. 아이가 휴대폰을 비추면 바로 들을 수 있게 기사 맨 위에 둔다. */
+async function listenStrip(ws) {
+  const target = ws.audioUrl || ws.sourceUrl;
+  if (!target) return '';
+  const svg = await qrSvg(target, { size: 108 });
+  return `<div class="listen">
+  <div class="qr">${svg}</div>
+  <div class="listen-text">
+    <b>음원 듣기 · Listen</b>
+    <span class="how">휴대폰 카메라로 이 QR 을 비추면 기사를 읽어 주는 음원이 나옵니다.</span>
+    <span class="addr">${esc(target)}</span>
+  </div>
+</div>`;
+}
+
+async function renderArticle(ws) {
   const a = ws.article || {};
-  const paras = (a.paragraphs || [])
-    .map((p, i) => `<p${i === 0 ? ' class="lead"' : ''}>${esc(p)}</p>`)
-    .join('\n');
+  const paragraphs = a.paragraphs || [];
+  const images = a.images || [];
+
+  // 사진 설명형 기사는 문단마다 사진이 붙는다. 한 장씩 문단 뒤에 끼워 넣고,
+  // 남는 사진은 아래에 모아 둔다.
+  const blocks = [];
+  paragraphs.forEach((para, i) => {
+    blocks.push(`<p${i === 0 ? ' class="lead"' : ''}>${esc(para)}</p>`);
+    if (images[i]) blocks.push(figure(images[i]));
+  });
+  const leftover = images.slice(paragraphs.length);
+  if (leftover.length) {
+    blocks.push(`<div class="shot-grid">${leftover.map((im) => figure(im)).join('')}</div>`);
+  }
+
   const credit = a.credit ? `<p class="credit">${esc(a.credit)}</p>` : '';
-  return page(ws, 'article', `<section class="article">
-${paras}
+  return page(ws, 'article', (await listenStrip(ws)) + `<section class="article">
+${blocks.join('\n')}
 ${credit}
 </section>`);
 }
@@ -154,7 +187,7 @@ function renderAnswers(ws) {
   return page(ws, 'answers', banner + questionSections(ws, true));
 }
 
-export function render(ws, kind) {
+export async function render(ws, kind) {
   if (kind === 'article') return renderArticle(ws);
   if (kind === 'worksheet') return renderWorksheet(ws);
   if (kind === 'answers') return renderAnswers(ws);

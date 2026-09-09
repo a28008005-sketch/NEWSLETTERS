@@ -105,6 +105,74 @@ function headlineOf(html) {
   return t ? stripTags(t[1]).replace(/\s*[|\-–]\s*[^|\-–]*$/, '').trim() : '';
 }
 
+// ---------- 사진 ----------
+// 로고, 아이콘, 추적용 1px 이미지처럼 본문 사진이 아닌 것들을 걸러낸다.
+const IMG_NOISE = /(logo|icon|sprite|avatar|placeholder|pixel|spacer|1x1|badge|favicon)/i;
+
+/** srcset 이 있으면 가장 큰 후보를 고른다. 인쇄용이라 해상도가 높을수록 좋다. */
+function bestFromSrcset(srcset) {
+  const candidates = srcset
+    .split(',')
+    .map((part) => part.trim().split(/\s+/))
+    .map(([url, size]) => ({ url, w: size && size.endsWith('w') ? parseInt(size) : 0 }))
+    .filter((c) => c.url);
+  if (!candidates.length) return null;
+  candidates.sort((a, b) => b.w - a.w);
+  return candidates[0].url;
+}
+
+function imageRefs(html, baseUrl) {
+  const scope = html.match(/<article\b[^>]*>([\s\S]*?)<\/article>/i)
+    || html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i);
+  const region = scope ? scope[1] : html;
+
+  const out = [];
+  const seen = new Set();
+  for (const [tag] of region.matchAll(/<img\b[^>]*>/gi)) {
+    const srcset = tag.match(/\bsrcset=["']([^"']+)["']/i);
+    const src = tag.match(/\bsrc=["']([^"']+)["']/i);
+    const raw = (srcset && bestFromSrcset(srcset[1])) || (src && src[1]);
+    if (!raw || raw.startsWith('data:')) continue;
+    if (IMG_NOISE.test(raw)) continue;
+
+    let abs;
+    try {
+      abs = new URL(raw, baseUrl).toString();
+    } catch {
+      continue;
+    }
+    if (seen.has(abs)) continue;
+    seen.add(abs);
+
+    const alt = tag.match(/\balt=["']([^"']*)["']/i);
+    out.push({ url: abs, alt: alt ? decode(alt[1]).trim() : '' });
+  }
+  return out;
+}
+
+// ---------- 음원 ----------
+// 기사 페이지의 '듣기' 음원을 찾는다. 못 찾으면 기사 주소를 그대로 쓴다.
+// 기사 페이지에 듣기 버튼이 있으므로 그 편이 빈 QR 보다 낫다.
+function audioUrl(html, baseUrl) {
+  const patterns = [
+    /<audio\b[^>]*\bsrc=["']([^"']+)["']/i,
+    /<audio\b[^>]*>[\s\S]{0,400}?<source\b[^>]*\bsrc=["']([^"']+)["']/i,
+    /["'](https?:\/\/[^"']+\.(?:mp3|m4a|aac|ogg))["']/i,
+    /<a\b[^>]*\bhref=["']([^"']+)["'][^>]*>[^<]*(?:listen|audio|음원|듣기)/i,
+  ];
+  for (const re of patterns) {
+    const m = html.match(re);
+    if (m) {
+      try {
+        return { url: new URL(m[1], baseUrl).toString(), found: true };
+      } catch {
+        /* 다음 패턴으로 */
+      }
+    }
+  }
+  return { url: baseUrl, found: false };
+}
+
 const LEVEL_FROM_PATH = { k1: 'K1', g2: 'G2', g34: 'G3-4', g56: 'G5-6' };
 
 export function slugOf(url) {
@@ -124,6 +192,8 @@ export async function fetchArticle(url) {
   }
 
   const level = LEVEL_FROM_PATH[new URL(url).pathname.split('/').filter(Boolean)[0]?.toLowerCase()] || null;
+  const images = imageRefs(html, url).slice(0, 5);
+  const audio = audioUrl(html, url);
 
   return {
     slug: slugOf(url),
@@ -131,6 +201,8 @@ export async function fetchArticle(url) {
     paragraphs: found.paragraphs,
     level,
     via: found.via,
+    images,
+    audio,
     url,
   };
 }
@@ -146,8 +218,10 @@ export function draftFrom(article) {
     status: '진행중',
     sourceUrl: article.url,
     note: '',
+    audioUrl: article.audio.url,
     article: {
       paragraphs: article.paragraphs,
+      images: article.images || [],
       credit: `출처: ${article.url}`,
     },
     vocabulary: [],
