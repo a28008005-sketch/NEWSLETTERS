@@ -1,0 +1,41 @@
+name: Notion 연결 확인
+
+# 토큰과 데이터베이스 접근, 파일 업로드까지 실제로 확인한다.
+# 업로드한 파일은 어디에도 붙이지 않으므로 노션 작업 공간이 더러워지지 않는다.
+on:
+  workflow_dispatch:
+  push:
+    branches: ['claude/**']
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 한글 글꼴 설치
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-nanum
+          sudo fc-cache -f
+
+      - name: 토큰이 등록됐는지 먼저 확인
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+        run: |
+          if [ -z "$NOTION_TOKEN" ]; then
+            echo "NOTION_TOKEN 시크릿이 비어 있습니다."
+            echo "https://github.com/${{ github.repository }}/settings/secrets/actions 에서 등록해 주세요."
+            exit 1
+          fi
+          echo "시크릿이 등록되어 있습니다 (길이 ${#NOTION_TOKEN}자)."
+
+      - name: Notion 연결과 업로드 확인
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: ${{ vars.NOTION_DATABASE_ID }}
+        run: node src/cli.js verify

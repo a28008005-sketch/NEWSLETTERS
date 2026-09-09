@@ -85,6 +85,23 @@ export async function findRowByTitle(databaseId, title) {
   return res.results[0];
 }
 
+/** 데이터베이스의 행 목록을 제목과 파일 첨부 여부와 함께 돌려준다. */
+export async function listRows(databaseId, pageSize = 25) {
+  const res = await api(`/databases/${databaseId}/query`, {
+    method: 'POST',
+    body: { page_size: pageSize },
+  });
+  return (res.results || []).map((page) => {
+    const props = page.properties || {};
+    const title = (props.Name?.title || []).map((t) => t.plain_text).join('') || '(제목 없음)';
+    const files = {};
+    for (const key of ['원문', '워크시트', '정답지']) {
+      files[key] = (props[key]?.files || []).length;
+    }
+    return { id: page.id, url: page.url, title, files };
+  });
+}
+
 /**
  * 파일 하나를 Notion 에 올린다.
  * 1) file_uploads 생성 -> 2) 받은 URL 로 실제 바이트 전송

@@ -157,12 +157,79 @@ async function cmdDoctor() {
   process.exitCode = fail === 0 ? 0 : 1;
 }
 
+// ---------- verify ----------
+// 노션 쪽 연결을 끝까지 확인한다.
+// 업로드까지 실제로 해보되, 어디에도 붙이지 않는다.
+// 붙이지 않은 업로드는 노션이 알아서 만료시키므로 작업 공간이 더러워지지 않는다.
+async function cmdVerify() {
+  const dbId = process.env.NOTION_DATABASE_ID || notion.DEFAULT_DATABASE_ID;
+  let fail = 0;
+  console.log('\n🔎 Notion 연결 확인\n');
+
+  try {
+    const me = await notion.whoami();
+    ok(`토큰 유효 · 통합 이름: ${me.name || me.id}`);
+  } catch (e) {
+    bad(e.message);
+    console.log('\n토큰이 잘못됐거나 만료됐습니다. docs/SETUP.md 1단계를 확인해 주세요.\n');
+    process.exitCode = 1;
+    return;
+  }
+
+  let rows = [];
+  try {
+    rows = await notion.listRows(dbId);
+    ok(`데이터베이스 접근 성공 · 행 ${rows.length}개`);
+  } catch (e) {
+    bad(`데이터베이스에 접근할 수 없습니다: ${e.message}`);
+    console.log('\n대부분 통합을 데이터베이스에 연결하지 않아서 생깁니다. docs/SETUP.md 2단계를 확인해 주세요.\n');
+    process.exitCode = 1;
+    return;
+  }
+
+  if (rows.length) {
+    console.log('\n  현재 첨부 상태');
+    for (const r of rows) {
+      const marks = ['원문', '워크시트', '정답지'].map((k) => `${k}:${r.files[k] ? '있음' : '없음'}`);
+      console.log(`    · ${r.title.padEnd(24)} ${marks.join('  ')}`);
+    }
+  }
+
+  console.log('');
+  try {
+    const files = targets('all');
+    if (!files.length) {
+      info('업로드 시험에 쓸 JSON 이 없어 건너뜁니다.');
+    } else {
+      const ws = loadWorksheet(files[0]);
+      mkdirSync(OUT_DIR, { recursive: true });
+      const htmlPath = join(OUT_DIR, `${ws.id}-verify.html`);
+      const pdfPath = join(OUT_DIR, `${ws.id}-verify.pdf`);
+      writeFileSync(htmlPath, render(ws, 'worksheet'), 'utf8');
+      await htmlToPdf(htmlPath, pdfPath);
+      const up = await notion.uploadFile(pdfPath);
+      ok(`파일 업로드 성공 · ${up.filename} (id ${up.id})`);
+      info('이 파일은 어디에도 붙이지 않았습니다. 노션이 만료 처리하니 지우실 필요 없습니다.');
+    }
+  } catch (e) {
+    bad(`업로드 실패: ${e.message}`);
+    fail++;
+  }
+
+  console.log(
+    fail === 0
+      ? '\n연결과 업로드 모두 정상입니다. publish 를 돌리면 실제로 첨부됩니다.\n'
+      : `\n${fail}건을 해결해야 합니다.\n`
+  );
+  process.exitCode = fail === 0 ? 0 : 1;
+}
+
 // ---------- 진입점 ----------
 const [cmd, arg] = process.argv.slice(2);
-const run = { doctor: cmdDoctor, build: cmdBuild, publish: cmdPublish }[cmd];
+const run = { doctor: cmdDoctor, verify: cmdVerify, build: cmdBuild, publish: cmdPublish }[cmd];
 if (!run) {
   console.log(`사용법:
-  node src/cli.js doctor              환경 점검 (Chrome·Notion 토큰·JSON 검사)
+  node src/cli.js doctor              환경 점검 (Chrome·Notion 토큰·JSON 검사)\n  node src/cli.js verify              Notion 연결과 업로드까지 실제로 확인 (아무것도 첨부하지 않음)
   node src/cli.js build   [경로|all]  PDF 3종 생성 (Notion 없이도 동작)
   node src/cli.js publish [경로|all]  생성 + Notion 파일 속성에 첨부`);
   process.exit(1);
