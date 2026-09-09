@@ -5,6 +5,7 @@
 //   3) 문서 전체의 <p> 중 길이가 충분한 것
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
+import { sniffAudio } from './audio.js';
 
 const UA =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 ' +
@@ -196,13 +197,31 @@ function audioUrl(html, baseUrl) {
     const m = html.match(re);
     if (m) {
       try {
-        return { url: new URL(m[1], baseUrl).toString(), found: true };
+        return { url: new URL(m[1], baseUrl).toString() };
       } catch {
         /* 다음 패턴으로 */
       }
     }
   }
-  return { url: baseUrl, found: false };
+  return null;
+}
+
+/**
+ * 음원 주소를 찾는다.
+ * HTML 에 적혀 있으면 그대로 쓰고, 없으면 페이지를 띄워 통신을 들여다본다.
+ * 그래도 없으면 기사 주소로 돌아간다. 빈 QR 보다는 듣기 버튼이 있는 페이지가 낫다.
+ */
+async function resolveAudio(html, baseUrl, log = () => {}) {
+  const inHtml = audioUrl(html, baseUrl);
+  if (inHtml) return { url: inHtml.url, found: true, via: 'HTML' };
+
+  try {
+    const sniffed = await sniffAudio(baseUrl, { log });
+    if (sniffed.length) return { url: sniffed[0], found: true, via: '브라우저 통신' };
+  } catch (e) {
+    log(`음원 탐색 실패: ${e.message}`);
+  }
+  return { url: baseUrl, found: false, via: '없음 (기사 주소로 대체)' };
 }
 
 const LEVEL_FROM_PATH = { k1: 'K1', g2: 'G2', g34: 'G3-4', g56: 'G5-6' };
@@ -213,7 +232,7 @@ export function slugOf(url) {
   return last.replace(/[^a-z0-9-]/gi, '-').replace(/-+/g, '-').toLowerCase();
 }
 
-export async function fetchArticle(url) {
+export async function fetchArticle(url, { log = () => {} } = {}) {
   const res = await fetch(url, { headers: { 'user-agent': UA, accept: 'text/html' }, redirect: 'follow' });
   if (!res.ok) throw new Error(`기사를 받지 못했습니다 (${res.status}) ${url}`);
   const html = await res.text();
@@ -225,7 +244,7 @@ export async function fetchArticle(url) {
 
   const level = LEVEL_FROM_PATH[new URL(url).pathname.split('/').filter(Boolean)[0]?.toLowerCase()] || null;
   const images = sameArticleOnly(imageRefs(html, url)).slice(0, 6);
-  const audio = audioUrl(html, url);
+  const audio = await resolveAudio(html, url, log);
 
   return {
     slug: slugOf(url),

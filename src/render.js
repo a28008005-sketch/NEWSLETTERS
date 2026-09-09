@@ -20,8 +20,14 @@ export const KINDS = {
   answers:   { key: '정답지',  label: 'ANSWER KEY',       suffix: 'answers' },
 };
 
+/** 화면에 무엇을 보일지. 지정하지 않으면 지금까지처럼 모두 보인다. */
+function show(ws) {
+  return { date: true, credit: true, ...(ws.display || {}) };
+}
+
 function head(ws, kind) {
   const k = KINDS[kind];
+  const d = show(ws);
   return `<header class="sheet-head">
   <div>
     <div class="kind">${k.label}</div>
@@ -29,7 +35,7 @@ function head(ws, kind) {
   </div>
   <div class="meta">
     <span class="badge">${esc(ws.level)}</span> <span class="badge">${esc(ws.topic)}</span><br>
-    ${esc(ws.date || '')}
+    ${d.date ? esc(ws.date || '') : ''}
   </div>
 </header>`;
 }
@@ -39,9 +45,10 @@ function nameBar() {
 }
 
 function foot(ws, kind) {
+  const d = show(ws);
   return `<footer class="sheet-foot">
   <span>${esc(ws.title)} · ${esc(KINDS[kind].label)}</span>
-  <span>${esc(ws.sourceUrl || '')}</span>
+  <span>${d.credit ? esc(ws.sourceUrl || '') : ''}</span>
 </footer>`;
 }
 
@@ -78,7 +85,7 @@ async function listenStrip(ws) {
   <div class="listen-text">
     <b>음원 듣기 · Listen</b>
     <span class="how">휴대폰 카메라로 이 QR 을 비추면 기사를 읽어 주는 음원이 나옵니다.</span>
-    <span class="addr">${esc(target)}</span>
+    ${show(ws).credit ? `<span class="addr">${esc(target)}</span>` : ''}
   </div>
 </div>`;
 }
@@ -104,7 +111,7 @@ async function renderArticle(ws) {
     blocks.push(`<div class="shot-grid">${leftover.map((im) => figure(im)).join('')}</div>`);
   }
 
-  const credit = a.credit ? `<p class="credit">${esc(a.credit)}</p>` : '';
+  const credit = show(ws).credit && a.credit ? `<p class="credit">${esc(a.credit)}</p>` : '';
   return page(ws, 'article', (await listenStrip(ws)) + `<section class="article">
 ${blocks.join('\n')}
 ${credit}

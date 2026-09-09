@@ -174,13 +174,14 @@ async function cmdDoctor() {
 async function cmdFetch(url) {
   if (!url) throw new Error('기사 URL 을 함께 적어주세요. 예) node src/cli.js fetch https://...');
 
-  const article = await fetchArticle(url);
+  const article = await fetchArticle(url, { log: (m) => info(m) });
   const draftDir = join(ROOT, 'drafts');
   const path = writeDraft(article, draftDir);
 
   ok(`본문을 받았습니다 · 문단 ${article.paragraphs.length}개 (추출 경로: ${article.via})`);
   info(`제목: ${article.headline}`);
   info(`레벨 추정: ${article.level || '알 수 없음 (직접 지정 필요)'}`);
+  info(`음원: ${article.audio.url}  [${article.audio.via}]`);
   info(`초안 파일: ${path}`);
 
   // 추출이 제대로 됐는지 사람이 눈으로 확인할 수 있도록 그대로 출력한다.
