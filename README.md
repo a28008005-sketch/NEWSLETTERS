@@ -53,6 +53,12 @@ data/worksheets/moon-mission.json      ← 여기만 작성하면 됩니다
 # 환경이 제대로 갖춰졌는지 확인 (제일 먼저 실행해 보세요)
 node src/cli.js doctor
 
+# 기사 URL 로 초안 만들기 (본문이 자동으로 채워집니다)
+node src/cli.js fetch https://www.timeforkids.com/k1/fierce-fish-k1/
+
+# Notion 연결과 업로드가 되는지 확인 (아무것도 첨부하지 않습니다)
+node src/cli.js verify
+
 # PDF 만 만들기 — Notion 토큰 없이도 됩니다. 결과는 out/ 에 쌓입니다
 node src/cli.js build data/worksheets/moon-mission.json
 node src/cli.js build all
@@ -69,7 +75,9 @@ node src/cli.js publish all
 
 ## 워크시트 JSON 쓰는 법
 
-`data/worksheets/sample-template.json` 을 복사해서 고쳐 쓰시는 게 가장 빠릅니다.
+`examples/sample-template.json` 을 `data/worksheets/` 로 복사해서 고쳐 쓰시는 게 가장 빠릅니다.
+예시 파일이 `examples/` 에 있는 이유는, `data/worksheets/` 에 두면 `publish all` 이 예시까지
+노션에 올려버리기 때문입니다. 이 폴더에는 실제로 발행할 워크시트만 두세요.
 
 ```jsonc
 {
@@ -129,5 +137,7 @@ GitHub Actions 가 PDF 를 만들고 Notion 에 첨부합니다. 컴퓨터를 �
 | `src/chrome.js` | Mac·Windows·Linux 에서 Chrome 찾기 |
 | `src/notion.js` | Notion 업로드·첨부 API |
 | `templates/worksheet.css` | A4 인쇄 스타일 |
-| `data/worksheets/` | 워크시트 원본 JSON |
+| `data/worksheets/` | 발행할 워크시트 JSON (여기 있는 것은 전부 노션에 올라갑니다) |
+| `examples/` | 복사해 쓰는 예시 JSON (발행 대상 아님) |
+| `drafts/` | fetch 로 받아온 초안 (검토 후 data/worksheets 로 옮김) |
 | `out/` | 생성된 HTML·PDF (git 에 올라가지 않습니다) |
