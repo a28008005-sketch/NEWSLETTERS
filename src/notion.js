@@ -22,16 +22,42 @@ function token() {
   return t;
 }
 
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/**
+ * Notion 은 초당 요청 수를 제한한다(429). 워크시트 하나에 파일 3개를 올리므로
+ * 여러 건을 한꺼번에 발행하면 쉽게 걸린다. 429 와 5xx 는 잠깐 쉬었다 다시 시도한다.
+ */
+async function withRetry(label, send, { tries = 4 } = {}) {
+  for (let attempt = 1; ; attempt++) {
+    let res;
+    try {
+      res = await send();
+    } catch (err) {
+      // 네트워크가 끊긴 경우도 재시도 대상
+      if (attempt >= tries) throw new NotionError(`${label} 실패: ${err.message}`);
+      await sleep(500 * 2 ** (attempt - 1));
+      continue;
+    }
+    if (res.status !== 429 && res.status < 500) return res;
+    if (attempt >= tries) return res;
+    const retryAfter = Number(res.headers.get('retry-after'));
+    await sleep(Number.isFinite(retryAfter) && retryAfter > 0 ? retryAfter * 1000 : 500 * 2 ** (attempt - 1));
+  }
+}
+
 async function api(path, { method = 'GET', body } = {}) {
-  const res = await fetch(`${API}${path}`, {
-    method,
-    headers: {
-      authorization: `Bearer ${token()}`,
-      'Notion-Version': NOTION_VERSION,
-      ...(body ? { 'content-type': 'application/json' } : {}),
-    },
-    ...(body ? { body: JSON.stringify(body) } : {}),
-  });
+  const res = await withRetry(`Notion ${method} ${path}`, () =>
+    fetch(`${API}${path}`, {
+      method,
+      headers: {
+        authorization: `Bearer ${token()}`,
+        'Notion-Version': NOTION_VERSION,
+        ...(body ? { 'content-type': 'application/json' } : {}),
+      },
+      ...(body ? { body: JSON.stringify(body) } : {}),
+    })
+  );
   const text = await res.text();
   if (!res.ok) {
     throw new NotionError(`Notion ${method} ${path} 실패 (${res.status}): ${text.slice(0, 500)}`);
@@ -75,11 +101,13 @@ export async function uploadFile(filePath, contentType = 'application/pdf') {
   form.append('file', new Blob([readFileSync(filePath)], { type: contentType }), filename);
 
   const sendUrl = created.upload_url || `${API}/file_uploads/${created.id}/send`;
-  const res = await fetch(sendUrl, {
-    method: 'POST',
-    headers: { authorization: `Bearer ${token()}`, 'Notion-Version': NOTION_VERSION },
-    body: form,
-  });
+  const res = await withRetry(`파일 전송 ${filename}`, () =>
+    fetch(sendUrl, {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token()}`, 'Notion-Version': NOTION_VERSION },
+      body: form,
+    })
+  );
   const text = await res.text();
   if (!res.ok) {
     throw new NotionError(`파일 전송 실패 (${res.status}) ${filename}: ${text.slice(0, 500)}`);
