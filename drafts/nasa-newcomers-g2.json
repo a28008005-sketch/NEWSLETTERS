@@ -9,6 +9,25 @@
   "note": "",
   "audioUrl": "https://www.timeforkids.com/g2/nasa-newcomers-g2/",
   "article": {
+    "blocks": [
+      {
+        "type": "image",
+        "url": "https://www.timeforkids.com/wp-content/uploads/2026/01/G2_260306_nasas_newcomers.jpg?w=1024",
+        "alt": "A group of NASA astronauts in blue flight suits pose together behind large red letters spelling “NASA.”"
+      },
+      {
+        "type": "text",
+        "text": "Becoming an astronaut isn’t easy. To do the job, people have to go through a difficult program. It’s called the Astronaut Candidate Program. NASA selects new applicants every few years. Last year, the agency chose 10 new people (pictured above) for the program. They’re not astronauts yet. They could become astronauts. They could even go to space someday. There’s a lot to learn first."
+      },
+      {
+        "type": "text",
+        "text": "The newcomers reported for duty at the Johnson Space Center. That’s in Houston, Texas. They’re now training. They’ll study subjects such as robotics and medicine. They’ll practice living in space and going on spacewalks. And they’ll learn to fly powerful jets."
+      },
+      {
+        "type": "text",
+        "text": "Sean Duffy was the acting NASA administrator in 2025. He welcomed the group during a ceremony. It took place on September 22, 2025. The new astronauts prove that there’s “no limit to what a determined dreamer can achieve,” Duffy said during his speech. “Even going to space.”"
+      }
+    ],
     "paragraphs": [
       "Becoming an astronaut isn’t easy. To do the job, people have to go through a difficult program. It’s called the Astronaut Candidate Program. NASA selects new applicants every few years. Last year, the agency chose 10 new people (pictured above) for the program. They’re not astronauts yet. They could become astronauts. They could even go to space someday. There’s a lot to learn first.",
       "The newcomers reported for duty at the Johnson Space Center. That’s in Houston, Texas. They’re now training. They’ll study subjects such as robotics and medicine. They’ll practice living in space and going on spacewalks. And they’ll learn to fly powerful jets.",

@@ -7,8 +7,23 @@
   "status": "진행중",
   "sourceUrl": "https://www.timeforkids.com/g2/gorilla-multiples-g2/",
   "note": "",
-  "audioUrl": "https://www.timeforkids.com/g2/gorilla-multiples-g2/",
+  "audioUrl": "https://audio.emagazines.com/readalong_364527_01ee5f65-de91-43a8-826c-03b80362e38e.mp3",
   "article": {
+    "blocks": [
+      {
+        "type": "image",
+        "url": "https://www.timeforkids.com/wp-content/uploads/2026/04/G3G5_260410_gorilla_multiples.jpg?w=1024",
+        "alt": "An adult gorilla sits on the ground holding two baby gorillas close."
+      },
+      {
+        "type": "text",
+        "text": "In March, gorilla twins were born in Virunga National Park. That’s in the Democratic Republic of Congo. In the 1970s, the mountain gorillas were facing extinction. The park is part of an effort to conserve the species."
+      },
+      {
+        "type": "text",
+        "text": "Nine mountain gorillas have been born in Virunga this year. There have been two sets of twins. One set was announced in January. The second set was announced in March. Twin births are rare in mountain gorillas. Jacques Katutu is head of gorilla monitoring at the park. He says the twins are “a strong indicator of the overall health” of the species. They are being closely monitored by park staff."
+      }
+    ],
     "paragraphs": [
       "In March, gorilla twins were born in Virunga National Park. That’s in the Democratic Republic of Congo. In the 1970s, the mountain gorillas were facing extinction. The park is part of an effort to conserve the species.",
       "Nine mountain gorillas have been born in Virunga this year. There have been two sets of twins. One set was announced in January. The second set was announced in March. Twin births are rare in mountain gorillas. Jacques Katutu is head of gorilla monitoring at the park. He says the twins are “a strong indicator of the overall health” of the species. They are being closely monitored by park staff."

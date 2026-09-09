@@ -9,6 +9,41 @@
   "note": "",
   "audioUrl": "https://www.timeforkids.com/k1/saving-sea-turtles/",
   "article": {
+    "blocks": [
+      {
+        "type": "image",
+        "url": "https://www.timeforkids.com/wp-content/uploads/2024/10/G3G5_241018_cover_hero.jpg?w=1024",
+        "alt": ""
+      },
+      {
+        "type": "text",
+        "text": "Grace Buschiazzo (above) is a marine biologist. She works at the South Carolina Aquarium. She is part of its Sea Turtle Care Center."
+      },
+      {
+        "type": "heading",
+        "text": "Turtle Rescue"
+      },
+      {
+        "type": "text",
+        "text": "Sea turtles can get sick. They can get hurt. The team at the care center treats them."
+      },
+      {
+        "type": "heading",
+        "text": "A Trip to the Doctor"
+      },
+      {
+        "type": "text",
+        "text": "This turtle is getting scanned. It has to be strong and healthy. Then it can go back to the sea."
+      },
+      {
+        "type": "heading",
+        "text": "Good as New"
+      },
+      {
+        "type": "text",
+        "text": "Another turtle swallowed fishing line. Doctors did surgery. They removed it. The turtle was saved."
+      }
+    ],
     "paragraphs": [
       "Grace Buschiazzo (above) is a marine biologist. She works at the South Carolina Aquarium. She is part of its Sea Turtle Care Center.",
       "Sea turtles can get sick. They can get hurt. The team at the care center treats them.",

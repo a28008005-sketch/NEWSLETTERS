@@ -9,6 +9,69 @@
   "note": "",
   "audioUrl": "https://www.timeforkids.com/k1/fierce-fish-k1/",
   "article": {
+    "blocks": [
+      {
+        "type": "image",
+        "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260501_cover_hero.jpg?w=1024",
+        "alt": "A closeup view of a shark with its mouth open"
+      },
+      {
+        "type": "text",
+        "text": "Imagine a shark. What do you think of? Sharks come in all shapes and sizes. Some are big. Some are small. Some are fast and powerful. Others are calm and slow. Here are some shark facts."
+      },
+      {
+        "type": "heading",
+        "text": "Sharks are predators."
+      },
+      {
+        "type": "image",
+        "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260501_sharks_are_predators.jpg?w=1024",
+        "alt": ""
+      },
+      {
+        "type": "text",
+        "text": "They are at the top of the food chain. They eat other animals. These include big fish, like this tuna."
+      },
+      {
+        "type": "heading",
+        "text": "There are many kinds of sharks."
+      },
+      {
+        "type": "image",
+        "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260501_many_kinds.jpg?w=1024",
+        "alt": ""
+      },
+      {
+        "type": "text",
+        "text": "There are more than 400 species of sharks. This is a hammerhead shark. See the shape of its head?"
+      },
+      {
+        "type": "heading",
+        "text": "Sharks like their space."
+      },
+      {
+        "type": "image",
+        "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260501_sharks_like_space.jpg?w=1024",
+        "alt": ""
+      },
+      {
+        "type": "text",
+        "text": "Sharks may bite people. But this is rare. Humans are not part of their normal diet. They prefer fish."
+      },
+      {
+        "type": "heading",
+        "text": "Some sharks jump!"
+      },
+      {
+        "type": "image",
+        "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260501_some_sharks_jump.jpg?w=1024",
+        "alt": ""
+      },
+      {
+        "type": "text",
+        "text": "This is a great white shark. It can leap out of the water. This helps it catch food, like seals."
+      }
+    ],
     "paragraphs": [
       "Imagine a shark. What do you think of? Sharks come in all shapes and sizes. Some are big. Some are small. Some are fast and powerful. Others are calm and slow. Here are some shark facts.",
       "They are at the top of the food chain. They eat other animals. These include big fish, like this tuna.",
