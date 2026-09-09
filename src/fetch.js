@@ -309,11 +309,10 @@ export async function fetchArticle(url, { log = () => {} } = {}) {
   // 소제목까지 살린 순서 그대로의 본문. 사진은 기사 것만 남긴다.
   const scope = html.match(/<article\b[^>]*>([\s\S]*?)<\/article>/i)
     || html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i);
-  const keep = new Set(images.map((i) => i.url));
-  const blocks = trimBlocks(
-    bodyBlocks(bodyOnly(scope ? scope[1] : html), url)
-      .filter((b) => b.type !== 'image' || keep.has(b.url))
-  );
+  // 파일명 앞부분으로 거르는 규칙은 순서 정보가 없는 옛 방식에만 필요하다.
+  // 소제목 구조에서는 본문 구간을 자르고 마지막 문단 뒤를 떼어내는 것으로 충분하고,
+  // 파일명 규칙을 함께 걸면 같은 기사인데 업로드 시기가 다른 사진까지 잃는다.
+  const blocks = trimBlocks(bodyBlocks(bodyOnly(scope ? scope[1] : html), url));
 
   return {
     slug: slugOf(url),
