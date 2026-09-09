@@ -88,14 +88,18 @@ async function renderArticle(ws) {
   const paragraphs = a.paragraphs || [];
   const images = a.images || [];
 
-  // 사진 설명형 기사는 문단마다 사진이 붙는다. 한 장씩 문단 뒤에 끼워 넣고,
-  // 남는 사진은 아래에 모아 둔다.
+  // 첫 문단은 도입부, 첫 사진은 표지 사진이라 각각 전체 너비로 둔다.
+  // 그 뒤 문단들은 사진 설명이므로 글과 사진을 나란히 놓아야 읽힌다.
   const blocks = [];
-  paragraphs.forEach((para, i) => {
-    blocks.push(`<p${i === 0 ? ' class="lead"' : ''}>${esc(para)}</p>`);
-    if (images[i]) blocks.push(figure(images[i]));
-  });
-  const leftover = images.slice(paragraphs.length);
+  if (paragraphs[0]) blocks.push(`<p class="lead">${esc(paragraphs[0])}</p>`);
+  if (images[0]) blocks.push(figure(images[0], 'shot hero'));
+
+  for (let i = 1; i < paragraphs.length; i++) {
+    const para = `<p>${esc(paragraphs[i])}</p>`;
+    blocks.push(images[i] ? `<div class="pair">${para}${figure(images[i])}</div>` : para);
+  }
+
+  const leftover = images.slice(Math.max(paragraphs.length, 1));
   if (leftover.length) {
     blocks.push(`<div class="shot-grid">${leftover.map((im) => figure(im)).join('')}</div>`);
   }
@@ -111,13 +115,16 @@ ${credit}
 function renderQuestion(q, withAnswer) {
   const text = `<div class="q-text">${esc(q.q)}</div>`;
   if (q.type === 'mc') {
-    const choices = (q.choices || [])
+    const list = q.choices || [];
+    const choices = list
       .map((c, i) => {
         const chosen = withAnswer && i === q.answer;
         return `<li${chosen ? ' class="answer"' : ''}>${CHOICE_LABEL[i]}. ${esc(c)}${chosen ? ' &nbsp;&#10004;' : ''}</li>`;
       })
       .join('\n');
-    return `${text}<ul class="choices">\n${choices}\n</ul>`;
+    // 보기가 모두 짧을 때만 한 줄로. 길면 줄바꿈이 지저분해진다.
+    const inline = list.every((c) => String(c).length <= 20);
+    return `${text}<ul class="choices${inline ? ' inline' : ''}">\n${choices}\n</ul>`;
   }
   // 서술형·단답형
   const lines = q.lines || 2;

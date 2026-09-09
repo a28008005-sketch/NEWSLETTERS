@@ -34,7 +34,7 @@ body {
   align-items: flex-end;
   border-bottom: 2.5px solid var(--accent);
   padding-bottom: 6px;
-  margin-bottom: 14px;
+  margin-bottom: 10px;
 }
 .sheet-head .kind { font-size: 9.5pt; letter-spacing: .12em; color: var(--accent); font-weight: 700; }
 .sheet-head h1 { margin: 2px 0 0; font-size: 19pt; letter-spacing: -.01em; }
@@ -47,13 +47,16 @@ body {
 /* ---------- 이름·날짜 칸 ---------- */
 .namebar {
   display: flex; gap: 18px; font-size: 10pt; color: var(--muted);
-  border: 1px solid var(--line); border-radius: 5px; padding: 7px 12px; margin-bottom: 16px;
+  border: 1px solid var(--line); border-radius: 5px; padding: 6px 12px; margin-bottom: 11px;
 }
 .namebar span { flex: 1; }
 .namebar b { color: var(--ink); font-weight: 700; margin-right: 6px; }
 
 /* ---------- 섹션 ---------- */
-section { margin-bottom: 16px; break-inside: avoid; }
+section { margin-bottom: 11px; break-inside: avoid; }
+/* 본문은 길어지면 다음 쪽으로 이어져야 한다.
+   여기까지 나눔을 막으면 빈 쪽이 생기고 쪽수가 불어난다. */
+section.article { break-inside: auto; }
 section > h2 {
   font-size: 11.5pt; margin: 0 0 8px;
   padding-left: 9px; border-left: 4px solid var(--accent);
@@ -67,19 +70,22 @@ section > h2 small { font-weight: 400; color: var(--muted); margin-left: 6px; fo
 
 /* ---------- 단어 ---------- */
 table.vocab { width: 100%; border-collapse: collapse; font-size: 10.5pt; }
-table.vocab th, table.vocab td { border: 1px solid var(--line); padding: 6px 9px; text-align: left; }
+table.vocab th, table.vocab td { border: 1px solid var(--line); padding: 4px 9px; text-align: left; }
 table.vocab th { background: var(--soft); font-size: 9.5pt; }
 table.vocab td.word { width: 27%; font-weight: 700; }
-table.vocab td.blank { height: 26px; }
+table.vocab td.blank { height: 23px; }
 
 /* ---------- 문항 ---------- */
 ol.questions { margin: 0; padding-left: 20px; }
-ol.questions > li { margin-bottom: 11px; break-inside: avoid; }
+ol.questions > li { margin-bottom: 7px; break-inside: avoid; }
 .q-text { font-weight: 600; }
 .choices { list-style: none; margin: 5px 0 0; padding: 0; }
 .choices li { margin: 2px 0; }
+/* 보기가 짧으면 한 줄에 늘어놓는다. 세로로 쌓으면 한 쪽을 넘겨 종이가 두 장이 된다. */
+.choices.inline { display: flex; flex-wrap: wrap; gap: 3px 22px; }
+.choices.inline li { margin: 0; }
 .answer-line { border-bottom: 1px solid var(--line); height: 20px; margin-top: 5px; }
-.answer-line + .answer-line { margin-top: 9px; }
+.answer-line + .answer-line { margin-top: 7px; }
 
 /* ---------- 정답지 ---------- */
 .answer { color: var(--accent); font-weight: 700; }
@@ -94,7 +100,7 @@ ol.questions > li { margin-bottom: 11px; break-inside: avoid; }
 
 /* ---------- 꼬리말 ---------- */
 .sheet-foot {
-  margin-top: 18px; padding-top: 7px; border-top: 1px solid var(--line);
+  margin-top: 12px; padding-top: 6px; border-top: 1px solid var(--line);
   font-size: 8.5pt; color: var(--muted); display: flex; justify-content: space-between;
 }
 
@@ -116,14 +122,26 @@ ol.questions > li { margin-bottom: 11px; break-inside: avoid; }
 }
 
 /* ---------- 기사 사진 ---------- */
-figure.shot { margin: 0 0 11px; break-inside: avoid; text-align: center; }
+figure.shot { margin: 0; break-inside: avoid; }
 figure.shot img {
-  max-width: 100%; max-height: 62mm; width: auto; height: auto;
+  display: block; width: 100%; height: auto;
   border-radius: 4px; border: 1px solid var(--line);
 }
 figure.shot figcaption {
-  margin-top: 3px; font-size: 8.5pt; color: var(--muted); text-align: left;
+  margin-top: 3px; font-size: 8pt; line-height: 1.35; color: var(--muted);
 }
-.shot-grid { display: flex; flex-wrap: wrap; gap: 9px; }
+
+/* 표지 사진은 첫 문단 아래 전체 너비로 */
+figure.hero { margin: 0 0 12px; }
+figure.hero img { max-height: 52mm; width: auto; max-width: 100%; margin: 0 auto; }
+figure.hero figcaption { text-align: center; }
+
+/* 사진 설명형 문단은 글과 사진을 나란히 놓는다. 기사에서 보던 모양 그대로다. */
+.pair { display: flex; gap: 13px; align-items: flex-start; margin-bottom: 12px; break-inside: avoid; }
+.pair > p { flex: 1 1 58%; margin: 0; }
+.pair > figure.shot { flex: 0 0 38%; }
+.pair > figure.shot img { max-height: 40mm; object-fit: cover; }
+
+.shot-grid { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 12px; }
 .shot-grid figure.shot { flex: 1 1 45%; }
-.shot-grid figure.shot img { max-height: 45mm; }
+.shot-grid figure.shot img { max-height: 40mm; object-fit: cover; }

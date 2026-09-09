@@ -1,0 +1,106 @@
+{
+  "id": "nasa-newcomers-g2",
+  "title": "NASA Newcomers",
+  "level": "G2",
+  "topic": "Space",
+  "date": "2026-09-09",
+  "status": "완성",
+  "sourceUrl": "https://www.timeforkids.com/g2/nasa-newcomers-g2/",
+  "audioUrl": "https://www.timeforkids.com/g2/nasa-newcomers-g2/",
+  "note": "우주비행사 후보자 프로그램에 대한 기사",
+  "article": {
+    "paragraphs": [
+      "Becoming an astronaut isn’t easy. To do the job, people have to go through a difficult program. It’s called the Astronaut Candidate Program. NASA selects new applicants every few years. Last year, the agency chose 10 new people (pictured above) for the program. They’re not astronauts yet. They could become astronauts. They could even go to space someday. There’s a lot to learn first.",
+      "The newcomers reported for duty at the Johnson Space Center. That’s in Houston, Texas. They’re now training. They’ll study subjects such as robotics and medicine. They’ll practice living in space and going on spacewalks. And they’ll learn to fly powerful jets.",
+      "Sean Duffy was the acting NASA administrator in 2025. He welcomed the group during a ceremony. It took place on September 22, 2025. The new astronauts prove that there’s “no limit to what a determined dreamer can achieve,” Duffy said during his speech. “Even going to space.”"
+    ],
+    "images": [
+      {
+        "url": "https://www.timeforkids.com/wp-content/uploads/2026/01/G2_260306_nasas_newcomers.jpg?w=1024",
+        "alt": "A group of NASA astronauts in blue flight suits pose together behind large red letters spelling “NASA.”"
+      }
+    ],
+    "credit": "출처: TIME for Kids, \"NASA Newcomers\" (https://www.timeforkids.com/g2/nasa-newcomers-g2/)"
+  },
+  "vocabulary": [
+    {
+      "word": "astronaut",
+      "meaning": "우주비행사"
+    },
+    {
+      "word": "candidate",
+      "meaning": "후보자"
+    },
+    {
+      "word": "training",
+      "meaning": "훈련"
+    },
+    {
+      "word": "robotics",
+      "meaning": "로봇 공학"
+    },
+    {
+      "word": "ceremony",
+      "meaning": "행사, 식"
+    }
+  ],
+  "questions": [
+    {
+      "type": "mc",
+      "q": "How many new people did NASA choose for the program?",
+      "choices": [
+        "Five",
+        "Ten",
+        "Fifteen",
+        "Twenty"
+      ],
+      "answer": 1
+    },
+    {
+      "type": "mc",
+      "q": "Where did the newcomers report for duty?",
+      "choices": [
+        "The Johnson Space Center",
+        "The Kennedy Space Center",
+        "Cape Canaveral",
+        "The Smithsonian"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "mc",
+      "q": "What will the newcomers study?",
+      "choices": [
+        "Robotics and medicine",
+        "Cooking and music",
+        "Law and art",
+        "Farming"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "short",
+      "q": "Are the newcomers astronauts yet?",
+      "lines": 2,
+      "answer": "No. They could become astronauts later."
+    },
+    {
+      "type": "short",
+      "q": "Name two things the newcomers will practice.",
+      "lines": 2,
+      "answer": "Living in space and going on spacewalks.",
+      "note": "제트기 조종(flying jets)도 정답입니다."
+    },
+    {
+      "type": "short",
+      "q": "Who welcomed the group at the ceremony?",
+      "lines": 2,
+      "answer": "Sean Duffy."
+    }
+  ],
+  "writing": {
+    "prompt": "What job would you like to train for? Write two sentences.",
+    "lines": 4,
+    "sample": "학생마다 답이 다릅니다. 두 문장을 완성했는지 확인해 주세요."
+  }
+}

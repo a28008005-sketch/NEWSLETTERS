@@ -1,0 +1,108 @@
+{
+  "id": "saving-sea-turtles",
+  "title": "Saving Sea Turtles",
+  "level": "K1",
+  "topic": "Animals",
+  "date": "2026-04-30",
+  "status": "완성",
+  "sourceUrl": "https://www.timeforkids.com/k1/saving-sea-turtles/",
+  "audioUrl": "https://www.timeforkids.com/k1/saving-sea-turtles/",
+  "note": "Grace Buschiazzo - South Carolina Aquarium, Sea Turtle Care Center",
+  "article": {
+    "paragraphs": [
+      "Grace Buschiazzo (above) is a marine biologist. She works at the South Carolina Aquarium. She is part of its Sea Turtle Care Center.",
+      "Sea turtles can get sick. They can get hurt. The team at the care center treats them.",
+      "This turtle is getting scanned. It has to be strong and healthy. Then it can go back to the sea.",
+      "Another turtle swallowed fishing line. Doctors did surgery. They removed it. The turtle was saved."
+    ],
+    "images": [
+      {
+        "url": "https://www.timeforkids.com/wp-content/uploads/2024/10/G3G5_241018_cover_hero.jpg?w=1024",
+        "alt": ""
+      },
+      {
+        "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260508_trip_to_the_doctor.jpg?w=1024",
+        "alt": ""
+      },
+      {
+        "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260508_good_as_new.jpg?w=1024",
+        "alt": ""
+      }
+    ],
+    "credit": "출처: TIME for Kids, \"Saving Sea Turtles\" (https://www.timeforkids.com/k1/saving-sea-turtles/)"
+  },
+  "vocabulary": [
+    {
+      "word": "marine biologist",
+      "meaning": "해양 생물학자"
+    },
+    {
+      "word": "aquarium",
+      "meaning": "수족관"
+    },
+    {
+      "word": "treat",
+      "meaning": "치료하다"
+    },
+    {
+      "word": "scan",
+      "meaning": "(몸속을) 촬영해 살피다"
+    },
+    {
+      "word": "surgery",
+      "meaning": "수술"
+    }
+  ],
+  "questions": [
+    {
+      "type": "mc",
+      "q": "What is Grace Buschiazzo's job?",
+      "choices": [
+        "A marine biologist",
+        "A teacher",
+        "A pilot",
+        "A cook"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "mc",
+      "q": "Where does she work?",
+      "choices": [
+        "The South Carolina Aquarium",
+        "A zoo",
+        "A school",
+        "A farm"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "mc",
+      "q": "What did one turtle swallow?",
+      "choices": [
+        "Fishing line",
+        "A rock",
+        "A shell",
+        "Sand"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "short",
+      "q": "What does the team at the care center do?",
+      "lines": 2,
+      "answer": "They treat sea turtles that are sick or hurt."
+    },
+    {
+      "type": "short",
+      "q": "When can a turtle go back to the sea?",
+      "lines": 2,
+      "answer": "When it is strong and healthy."
+    }
+  ],
+  "writing": {
+    "prompt": "Write one sentence about why the care center is important.",
+    "lines": 4,
+    "sample": "아픈 거북을 치료해서 바다로 돌려보낸다는 내용이면 정답입니다."
+  }
+}

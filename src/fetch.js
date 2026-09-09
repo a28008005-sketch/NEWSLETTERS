@@ -165,6 +165,23 @@ function imageRefs(html, baseUrl) {
   return out;
 }
 
+/**
+ * 이 사이트는 기사 사진을 한 번에 올리기 때문에 파일 이름 앞부분이 같다.
+ * 예) K1_260501_cover_hero.jpg, K1_260501_many_kinds.jpg
+ * 첫 사진과 앞부분이 다른 것은 다른 기사의 사진으로 보고 뺀다.
+ * 완벽하지는 않아서, 초안을 사람이 한 번 보도록 되어 있다.
+ */
+function sameArticleOnly(refs) {
+  if (refs.length < 2) return refs;
+  const groupOf = (url) => {
+    const base = decodeURIComponent(url.split('/').pop().split('?')[0]);
+    const parts = base.split('_');
+    return parts.length >= 2 ? `${parts[0]}_${parts[1]}` : base;
+  };
+  const first = groupOf(refs[0].url);
+  return refs.filter((r) => groupOf(r.url) === first);
+}
+
 // ---------- 음원 ----------
 // 기사 페이지의 '듣기' 음원을 찾는다. 못 찾으면 기사 주소를 그대로 쓴다.
 // 기사 페이지에 듣기 버튼이 있으므로 그 편이 빈 QR 보다 낫다.
@@ -207,7 +224,7 @@ export async function fetchArticle(url) {
   }
 
   const level = LEVEL_FROM_PATH[new URL(url).pathname.split('/').filter(Boolean)[0]?.toLowerCase()] || null;
-  const images = imageRefs(html, url).slice(0, 5);
+  const images = sameArticleOnly(imageRefs(html, url)).slice(0, 6);
   const audio = audioUrl(html, url);
 
   return {

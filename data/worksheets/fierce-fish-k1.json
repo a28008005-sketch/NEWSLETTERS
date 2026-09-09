@@ -6,6 +6,7 @@
   "date": "2026-09-09",
   "status": "완성",
   "sourceUrl": "https://www.timeforkids.com/k1/fierce-fish-k1/",
+  "audioUrl": "https://www.timeforkids.com/k1/fierce-fish-k1/",
   "note": "상어의 크기, 먹이, 종류를 사진과 함께 소개하는 K1 기사",
   "article": {
     "paragraphs": [
@@ -14,6 +15,28 @@
       "There are more than 400 species of sharks. This is a hammerhead shark. See the shape of its head?",
       "Sharks may bite people. But this is rare. Humans are not part of their normal diet. They prefer fish.",
       "This is a great white shark. It can leap out of the water. This helps it catch food, like seals."
+    ],
+    "images": [
+      {
+        "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260501_cover_hero.jpg?w=1024",
+        "alt": "A closeup view of a shark with its mouth open"
+      },
+      {
+        "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260501_sharks_are_predators.jpg?w=1024",
+        "alt": ""
+      },
+      {
+        "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260501_many_kinds.jpg?w=1024",
+        "alt": ""
+      },
+      {
+        "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260501_sharks_like_space.jpg?w=1024",
+        "alt": ""
+      },
+      {
+        "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260501_some_sharks_jump.jpg?w=1024",
+        "alt": ""
+      }
     ],
     "credit": "출처: TIME for Kids, \"Fierce Fish\" (https://www.timeforkids.com/k1/fierce-fish-k1/)"
   },
@@ -85,14 +108,13 @@
       "q": "What can a great white shark do to catch food?",
       "lines": 2,
       "answer": "It can leap out of the water.",
-      "note": "\"jump out of the water\" 처럼 써도 정답으로 봐주세요."
+      "note": "\"jump out of the water\" 도 정답입니다."
     },
     {
       "type": "short",
       "q": "Are all sharks the same size? Write your answer in one sentence.",
       "lines": 2,
-      "answer": "No. Some are big and some are small.",
-      "note": "첫 문단의 shapes and sizes 부분을 읽었는지 보는 문항입니다."
+      "answer": "No. Some are big and some are small."
     }
   ],
   "writing": {

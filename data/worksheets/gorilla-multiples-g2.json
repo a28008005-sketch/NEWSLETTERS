@@ -1,0 +1,104 @@
+{
+  "id": "gorilla-multiples-g2",
+  "title": "Gorilla Multiples",
+  "level": "G2",
+  "topic": "Animals",
+  "date": "2026-09-09",
+  "status": "완성",
+  "sourceUrl": "https://www.timeforkids.com/g2/gorilla-multiples-g2/",
+  "audioUrl": "https://www.timeforkids.com/g2/gorilla-multiples-g2/",
+  "note": "비룽가 국립공원 마운틴고릴라 쌍둥이 출산 기사",
+  "article": {
+    "paragraphs": [
+      "In March, gorilla twins were born in Virunga National Park. That’s in the Democratic Republic of Congo. In the 1970s, the mountain gorillas were facing extinction. The park is part of an effort to conserve the species.",
+      "Nine mountain gorillas have been born in Virunga this year. There have been two sets of twins. One set was announced in January. The second set was announced in March. Twin births are rare in mountain gorillas. Jacques Katutu is head of gorilla monitoring at the park. He says the twins are “a strong indicator of the overall health” of the species. They are being closely monitored by park staff."
+    ],
+    "images": [
+      {
+        "url": "https://www.timeforkids.com/wp-content/uploads/2026/04/G3G5_260410_gorilla_multiples.jpg?w=1024",
+        "alt": "An adult gorilla sits on the ground holding two baby gorillas close."
+      }
+    ],
+    "credit": "출처: TIME for Kids, \"Gorilla Multiples\" (https://www.timeforkids.com/g2/gorilla-multiples-g2/)"
+  },
+  "vocabulary": [
+    {
+      "word": "twins",
+      "meaning": "쌍둥이"
+    },
+    {
+      "word": "extinction",
+      "meaning": "멸종"
+    },
+    {
+      "word": "conserve",
+      "meaning": "보호하다, 보존하다"
+    },
+    {
+      "word": "rare",
+      "meaning": "드문"
+    },
+    {
+      "word": "monitor",
+      "meaning": "지켜보다, 관찰하다"
+    }
+  ],
+  "questions": [
+    {
+      "type": "mc",
+      "q": "Where were the gorilla twins born?",
+      "choices": [
+        "Virunga National Park",
+        "Yellowstone",
+        "The Serengeti",
+        "Kruger Park"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "mc",
+      "q": "How many mountain gorillas have been born in Virunga this year?",
+      "choices": [
+        "Two",
+        "Five",
+        "Nine",
+        "Twelve"
+      ],
+      "answer": 2
+    },
+    {
+      "type": "mc",
+      "q": "When was the second set of twins announced?",
+      "choices": [
+        "January",
+        "February",
+        "March",
+        "April"
+      ],
+      "answer": 2
+    },
+    {
+      "type": "short",
+      "q": "Why is the birth of twins big news?",
+      "lines": 2,
+      "answer": "Twin births are rare in mountain gorillas."
+    },
+    {
+      "type": "short",
+      "q": "What was happening to mountain gorillas in the 1970s?",
+      "lines": 2,
+      "answer": "They were facing extinction."
+    },
+    {
+      "type": "short",
+      "q": "What is Jacques Katutu's job at the park?",
+      "lines": 2,
+      "answer": "He is the head of gorilla monitoring."
+    }
+  ],
+  "writing": {
+    "prompt": "Why do you think people work to protect gorillas? Write two sentences.",
+    "lines": 4,
+    "sample": "멸종 위기, 개체 수 회복 같은 기사 내용과 연결되면 정답입니다."
+  }
+}

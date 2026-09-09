@@ -1,0 +1,124 @@
+{
+  "id": "meet-sea-turtles-k1",
+  "title": "Meet Sea Turtles",
+  "level": "K1",
+  "topic": "Animals",
+  "date": "2026-04-30",
+  "status": "완성",
+  "sourceUrl": "https://www.timeforkids.com/k1/meet-sea-turtles-k1/",
+  "audioUrl": "https://www.timeforkids.com/k1/meet-sea-turtles-k1/",
+  "note": "7종류의 바다거북이를 소개하는 기사",
+  "article": {
+    "paragraphs": [
+      "There are seven species of sea turtles. Each species has a shell for protection. Each species has strong flippers for swimming. Learn more about sea turtles.",
+      "This sea turtle is chasing a jellyfish. Some sea turtles also eat plants. They eat seaweed and algae.",
+      "Sea turtles live in the water. But they lay eggs on land. Baby turtles hurry to the ocean when they hatch.",
+      "Sea turtles have good eyesight. They can see in dark water. And they can see colors. Their eyesight helps them hunt.",
+      "There is trash in the ocean. That is a problem for turtles. See this bag? A turtle might think it is food."
+    ],
+    "images": [
+      {
+        "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260508_cover_hero.jpg?w=1024",
+        "alt": "A sea turtle swimming in blue water"
+      },
+      {
+        "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260508_turtle_diet.jpg?w=1024",
+        "alt": ""
+      },
+      {
+        "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260508_long_journey.jpg?w=1024",
+        "alt": ""
+      },
+      {
+        "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260508_sharp_eyes.jpg?w=1024",
+        "alt": ""
+      },
+      {
+        "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260508_turtles_in_trouble.jpg?w=1024",
+        "alt": ""
+      }
+    ],
+    "credit": "출처: TIME for Kids, \"Meet Sea Turtles\" (https://www.timeforkids.com/k1/meet-sea-turtles-k1/)"
+  },
+  "vocabulary": [
+    {
+      "word": "species",
+      "meaning": "종 (동물의 종류)"
+    },
+    {
+      "word": "shell",
+      "meaning": "등딱지, 껍데기"
+    },
+    {
+      "word": "flippers",
+      "meaning": "지느러미발"
+    },
+    {
+      "word": "eyesight",
+      "meaning": "시력"
+    },
+    {
+      "word": "trash",
+      "meaning": "쓰레기"
+    }
+  ],
+  "questions": [
+    {
+      "type": "mc",
+      "q": "How many species of sea turtles are there?",
+      "choices": [
+        "Five",
+        "Six",
+        "Seven",
+        "Eight"
+      ],
+      "answer": 2
+    },
+    {
+      "type": "mc",
+      "q": "Where do sea turtles lay their eggs?",
+      "choices": [
+        "On land",
+        "In the water",
+        "In trees",
+        "In caves"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "mc",
+      "q": "What might a turtle think a plastic bag is?",
+      "choices": [
+        "Food",
+        "A rock",
+        "A friend",
+        "A shell"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "short",
+      "q": "What helps sea turtles swim?",
+      "lines": 2,
+      "answer": "Strong flippers."
+    },
+    {
+      "type": "short",
+      "q": "Name one thing sea turtles eat.",
+      "lines": 2,
+      "answer": "Jellyfish.",
+      "note": "seaweed, algae, plants 도 모두 정답입니다."
+    },
+    {
+      "type": "short",
+      "q": "Why is trash in the ocean a problem for turtles?",
+      "lines": 2,
+      "answer": "A turtle might think the trash is food."
+    }
+  ],
+  "writing": {
+    "prompt": "Write one way you can help sea turtles.",
+    "lines": 4,
+    "sample": "쓰레기를 버리지 않기, 비닐봉지 줄이기 등 기사 마지막 문단과 연결되면 정답입니다."
+  }
+}
