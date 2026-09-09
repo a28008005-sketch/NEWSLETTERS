@@ -53,10 +53,26 @@ export async function sniffAudio(pageUrl, { waitMs = 9000, log = () => {} } = {}
   ]);
 
   const found = [];
-  const add = (url) => {
-    if (url && AUDIO_EXT.test(url) && !found.includes(url)) {
-      found.push(url);
-      log(`음원 발견: ${url}`);
+  const seen = new Set();
+  const keep = (url, why) => {
+    if (!url || found.includes(url)) return;
+    found.push(url);
+    log(`음원 발견 (${why}): ${url}`);
+  };
+  // 확장자로 알아보는 경우
+  const addByExt = (url) => {
+    if (url && AUDIO_EXT.test(url)) keep(url, '확장자');
+  };
+  // 확장자가 없는 스트리밍 주소는 응답 종류로만 알 수 있다
+  const addByMime = (url, mime) => {
+    if (url && AUDIO_MIME.test(mime || '')) keep(url, `형식 ${mime}`);
+  };
+  // 못 찾았을 때 무엇이 오갔는지 볼 수 있도록 후보를 모아 둔다
+  const candidates = [];
+  const note = (url) => {
+    if (url && !seen.has(url) && /audio|listen|speech|voice|tts|media|\.mp3|\.m4a/i.test(url)) {
+      seen.add(url);
+      candidates.push(url);
     }
   };
 
@@ -85,11 +101,17 @@ export async function sniffAudio(pageUrl, { waitMs = 9000, log = () => {} } = {}
         return;
       }
       const p = msg.params || {};
-      if (msg.method === 'Network.requestWillBeSent') add(p.request?.url);
-      if (msg.method === 'Network.responseReceived') {
-        if (AUDIO_MIME.test(p.response?.mimeType || '')) add(p.response.url);
-        else add(p.response?.url);
+      if (msg.method === 'Network.requestWillBeSent') {
+        addByExt(p.request?.url);
+        note(p.request?.url);
       }
+      if (msg.method === 'Network.responseReceived') {
+        addByExt(p.response?.url);
+        addByMime(p.response?.url, p.response?.mimeType);
+        note(p.response?.url);
+      }
+      // 버튼을 눌러 본 결과를 그대로 남긴다. 실패했을 때 원인을 보려면 필요하다.
+      if (msg.result?.result?.value) log(`페이지에서 찾은 것: ${msg.result.result.value}`);
     };
 
     send('Target.setAutoAttach', { autoAttach: true, waitForDebuggerOnStart: false, flatten: true });
@@ -116,8 +138,19 @@ export async function sniffAudio(pageUrl, { waitMs = 9000, log = () => {} } = {}
   } finally {
     try { ws?.close(); } catch {}
     proc.kill('SIGKILL');
-    rmSync(profile, { recursive: true, force: true });
+    // Chrome 이 프로필에 쓰던 파일을 놓을 시간을 준다.
+    // 여기서 나는 오류 때문에 애써 찾은 결과를 버리면 안 된다.
+    await sleep(600);
+    try {
+      rmSync(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
+    } catch {
+      /* 임시 폴더는 남아도 상관없다 */
+    }
   }
 
+  if (!found.length && candidates.length) {
+    log(`음원을 못 찾았습니다. 오간 주소 중 비슷한 것들:`);
+    candidates.slice(0, 15).forEach((c) => log(`  ? ${c}`));
+  }
   return found;
 }

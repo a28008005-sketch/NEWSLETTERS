@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
   push:
     branches: ['claude/**']
-    paths: ['data/pending-urls.txt', 'src/fetch.js']
+    paths: ['data/pending-urls.txt', 'src/fetch.js', 'src/audio.js']
 
 permissions:
   contents: write
