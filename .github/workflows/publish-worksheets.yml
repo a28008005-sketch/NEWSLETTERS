@@ -20,7 +20,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       # 한글이 깨지지 않도록 나눔 글꼴을 깔아준다
       - name: 한글 글꼴 설치
