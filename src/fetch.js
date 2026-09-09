@@ -121,10 +121,25 @@ function bestFromSrcset(srcset) {
   return candidates[0].url;
 }
 
+/**
+ * 본문이 끝나고 '다른 기사' 목록이 시작되는 지점을 찾는다.
+ * 그 목록의 문단은 잘려서 말줄임표로 끝나므로, 첫 말줄임표 문단이 곧 경계다.
+ * 문단을 걸러낼 때 이미 검증한 신호라 사진에도 그대로 쓸 수 있다.
+ */
+function bodyOnly(region) {
+  for (const m of region.matchAll(/<p\b[^>]*>([\s\S]*?)<\/p>/gi)) {
+    const text = stripTags(m[1]);
+    if (text.length >= 45 && /(…|\.\.\.)\s*$/.test(text)) {
+      return region.slice(0, m.index);
+    }
+  }
+  return region;
+}
+
 function imageRefs(html, baseUrl) {
   const scope = html.match(/<article\b[^>]*>([\s\S]*?)<\/article>/i)
     || html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i);
-  const region = scope ? scope[1] : html;
+  const region = bodyOnly(scope ? scope[1] : html);
 
   const out = [];
   const seen = new Set();
