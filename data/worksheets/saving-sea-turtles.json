@@ -36,12 +36,22 @@
         "text": "A Trip to the Doctor"
       },
       {
+        "type": "image",
+        "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260508_trip_to_the_doctor.jpg?w=1024",
+        "alt": ""
+      },
+      {
         "type": "text",
         "text": "This turtle is getting scanned. It has to be strong and healthy. Then it can go back to the sea."
       },
       {
         "type": "heading",
         "text": "Good as New"
+      },
+      {
+        "type": "image",
+        "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260508_good_as_new.jpg?w=1024",
+        "alt": ""
       },
       {
         "type": "text",
