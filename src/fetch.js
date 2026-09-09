@@ -37,9 +37,13 @@ const stripTags = (html) =>
 
 /** 페이지에서 광고·안내문처럼 본문이 아닌 문단을 걸러낸다. */
 const NOISE = /^(share|advertisement|subscribe|sign up|log in|related|more from|photo|credit:|illustration)/i;
+
 function usable(text) {
   if (text.length < 45) return false;
   if (NOISE.test(text)) return false;
+  // 페이지 아래쪽 '다른 기사' 카드는 본문을 잘라서 말줄임표로 끝난다.
+  // 본문 문단은 이렇게 끝나지 않으므로 이것만으로 충분히 걸러진다.
+  if (/(…|\.\.\.)\s*$/.test(text)) return false;
   return /[.!?]/.test(text);
 }
 
