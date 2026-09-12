@@ -1,0 +1,51 @@
+name: 요청받은 기사 고르기
+
+# 노션 '워크시트 만들기 요청' 의 대기 건을 읽어
+# 아직 만들지 않은 기사를 고르고 본문·사진·음원을 받아 둔다.
+# 문항은 사람이 쓰기 때문에 여기서 멈추고, 본문을 로그에 그대로 남긴다.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: worksheet-requests
+  cancel-in-progress: false
+
+jobs:
+  pick:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: 의존성 설치
+        run: npm ci
+
+      - name: 요청 확인 및 기사 받아오기
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: ${{ vars.NOTION_DATABASE_ID }}
+          NOTION_REQUEST_DB_ID: ${{ vars.NOTION_REQUEST_DB_ID }}
+        run: node src/cli.js requests
+
+      - name: 초안 커밋
+        if: always()
+        run: |
+          if [ -z "$(ls -A drafts 2>/dev/null)" ]; then exit 0; fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add drafts/
+          if git diff --cached --quiet; then
+            echo "새 초안이 없습니다."
+            exit 0
+          fi
+          git commit -m "Add article drafts picked from Notion requests"
+          git push origin HEAD:main

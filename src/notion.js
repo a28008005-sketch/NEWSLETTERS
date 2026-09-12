@@ -142,12 +142,39 @@ export async function pendingRequests(requestDbId, limit = 5) {
 }
 
 /** 요청 행의 상태와 결과를 적어 준다. */
-export function updateRequest(pageId, { status, result }) {
-  const properties = { 상태: { select: { name: status } } };
+export function updateRequest(pageId, { status, result, source }) {
+  const properties = {};
+  if (status) properties['상태'] = { select: { name: status } };
   if (result != null) {
     properties['결과'] = { rich_text: [{ text: { content: String(result).slice(0, 1900) } }] };
   }
+  if (source != null) properties['원문 URL'] = { url: source };
   return api(`/pages/${pageId}`, { method: 'PATCH', body: { properties } });
+}
+
+/**
+ * 발행이 끝난 기사에 걸려 있던 요청을 완료로 바꾼다.
+ * 기사 주소로 찾기 때문에 요청과 워크시트가 어긋날 일이 없다.
+ */
+export async function closeRequestFor(requestDbId, sourceUrl, resultText) {
+  if (!requestDbId || !sourceUrl) return null;
+  const res = await api(`/databases/${requestDbId}/query`, {
+    method: 'POST',
+    body: {
+      filter: {
+        and: [
+          { property: '원문 URL', url: { equals: sourceUrl } },
+          { property: '상태', select: { does_not_equal: '완료' } },
+        ],
+      },
+      page_size: 5,
+    },
+  });
+  const rows = res.results || [];
+  for (const row of rows) {
+    await updateRequest(row.id, { status: '완료', result: resultText });
+  }
+  return rows.length;
 }
 
 /**
