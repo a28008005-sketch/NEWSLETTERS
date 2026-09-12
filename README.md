@@ -41,6 +41,29 @@ data/worksheets/moon-mission.json      ← 여기만 작성하면 됩니다
 
 ---
 
+## 노션에서 한 줄로 만들기
+
+[영자신문 워크시트 대시보드](https://app.notion.com/p/3d9e4c508820812cbbafebecf70eff9e) 의 **워크시트 만들기 요청** 표에
+한 줄 적고 상태를 `대기` 로 두면 됩니다.
+
+```
+요청: K레벨 기사 한개 골라서 만들어줘
+레벨: K1   (비워 두면 요청 문장에서 읽어냅니다)
+상태: 대기
+```
+
+매시 7분에 GitHub 이 대기 건을 가져가 처리합니다.
+
+1. 해당 레벨의 기사 목록에서 **아직 만들지 않은** 기사를 고릅니다
+2. 본문, 사진, 음원 주소를 받아옵니다
+3. Claude 가 낱말과 문항, 쓰기 과제를 만듭니다
+4. PDF 3종을 만들어 마스터 목록에 첨부합니다
+5. 요청 행의 상태를 `완료` 로 바꾸고 결과 칸에 링크를 적습니다
+
+실패하면 상태가 `실패` 가 되고 결과 칸에 이유가 적힙니다. 고쳐서 다시 `대기` 로 두면 재시도합니다.
+
+터미널에서 직접 돌리려면 `node src/cli.js requests` 입니다.
+
 ## 처음 쓰신다면
 
 [docs/SETUP.md](docs/SETUP.md) 를 먼저 봐주세요. Notion 토큰 발급까지 15분이면 끝납니다.
@@ -135,7 +158,11 @@ GitHub Actions 가 PDF 를 만들고 Notion 에 첨부합니다. 컴퓨터를 �
 | `src/render.js` | JSON → 인쇄용 HTML 3종 |
 | `src/pdf.js` | HTML → PDF (헤드리스 Chrome) |
 | `src/chrome.js` | Mac·Windows·Linux 에서 Chrome 찾기 |
-| `src/notion.js` | Notion 업로드·첨부 API |
+| `src/notion.js` | Notion 업로드·첨부·요청 API |
+| `src/discover.js` | 아직 만들지 않은 기사 찾기 |
+| `src/generate.js` | 낱말·문항 생성 (Claude API) |
+| `src/audio.js` | 음원 파일 주소 찾기 |
+| `src/qr.js` | 음원 QR 만들기 |
 | `templates/worksheet.css` | A4 인쇄 스타일 |
 | `data/worksheets/` | 발행할 워크시트 JSON (여기 있는 것은 전부 노션에 올라갑니다) |
 | `examples/` | 복사해 쓰는 예시 JSON (발행 대상 아님) |

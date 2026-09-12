@@ -102,6 +102,54 @@ export async function listRows(databaseId, pageSize = 25) {
   });
 }
 
+export const REQUEST_DB_ID =
+  process.env.NOTION_REQUEST_DB_ID || 'accbb776-709f-4b75-8b70-4ce13aa54362';
+
+/** 마스터 목록에 이미 있는 원문 주소를 모은다. 같은 기사를 또 만들지 않기 위해서다. */
+export async function usedSourceUrls(databaseId) {
+  const urls = [];
+  let cursor;
+  do {
+    const res = await api(`/databases/${databaseId}/query`, {
+      method: 'POST',
+      body: { page_size: 100, ...(cursor ? { start_cursor: cursor } : {}) },
+    });
+    for (const page of res.results || []) {
+      const u = page.properties?.['원문 URL']?.url;
+      if (u) urls.push(u);
+    }
+    cursor = res.has_more ? res.next_cursor : null;
+  } while (cursor);
+  return urls;
+}
+
+/** 대기 중인 생성 요청을 오래된 것부터 돌려준다. */
+export async function pendingRequests(requestDbId, limit = 5) {
+  const res = await api(`/databases/${requestDbId}/query`, {
+    method: 'POST',
+    body: {
+      filter: { property: '상태', select: { equals: '대기' } },
+      sorts: [{ timestamp: 'created_time', direction: 'ascending' }],
+      page_size: limit,
+    },
+  });
+  return (res.results || []).map((page) => ({
+    id: page.id,
+    url: page.url,
+    text: (page.properties?.['요청']?.title || []).map((t) => t.plain_text).join(''),
+    level: page.properties?.['레벨']?.select?.name || null,
+  }));
+}
+
+/** 요청 행의 상태와 결과를 적어 준다. */
+export function updateRequest(pageId, { status, result }) {
+  const properties = { 상태: { select: { name: status } } };
+  if (result != null) {
+    properties['결과'] = { rich_text: [{ text: { content: String(result).slice(0, 1900) } }] };
+  }
+  return api(`/pages/${pageId}`, { method: 'PATCH', body: { properties } });
+}
+
 /**
  * 파일 하나를 Notion 에 올린다.
  * 1) file_uploads 생성 -> 2) 받은 URL 로 실제 바이트 전송

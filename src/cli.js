@@ -13,6 +13,8 @@ import { findChrome } from './chrome.js';
 import * as notion from './notion.js';
 import { fetchArticle, writeDraft } from './fetch.js';
 import { inlineImages } from './images.js';
+import { findUnusedArticles, levelFromText } from './discover.js';
+import { generateWorksheet, hasApiKey } from './generate.js';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DATA_DIR = join(ROOT, 'data', 'worksheets');
@@ -291,14 +293,122 @@ async function cmdVerify() {
   process.exitCode = fail === 0 ? 0 : 1;
 }
 
+// ---------- requests ----------
+// 노션의 요청 목록을 읽어 워크시트를 만들어 낸다.
+// 선생님은 노션에 한 줄 적기만 하면 되고, 나머지는 여기서 처리한다.
+async function handleOne(req, dbId) {
+  const level = req.level || levelFromText(req.text);
+  if (!level) {
+    throw new Error(`레벨을 알 수 없습니다. 요청에 K1, G2, G3-4, G5-6 중 하나를 적어 주세요: "${req.text}"`);
+  }
+  info(`레벨 ${level}`);
+
+  const used = await notion.usedSourceUrls(dbId);
+  const candidates = await findUnusedArticles(level, used, { log: (m) => info(m) });
+  if (!candidates.length) {
+    throw new Error(`${level} 에서 아직 만들지 않은 기사를 찾지 못했습니다.`);
+  }
+
+  // 목록 맨 앞이 가장 최근 기사다.
+  const url = candidates[0];
+  info(`고른 기사: ${url}`);
+
+  const article = await fetchArticle(url, { log: (m) => info(m) });
+  if (!article.blocks?.length) throw new Error(`본문을 읽지 못했습니다: ${url}`);
+
+  if (!hasApiKey()) {
+    writeDraft(article, join(ROOT, 'drafts'));
+    throw new Error(
+      'ANTHROPIC_API_KEY 가 없어 문항을 만들지 못했습니다. ' +
+        `기사 본문은 drafts/${article.slug}.json 에 받아 뒀습니다.`
+    );
+  }
+
+  const made = await generateWorksheet(
+    { title: article.headline, level, article: { blocks: article.blocks } },
+    { log: (m) => info(m) }
+  );
+
+  const ws = {
+    id: article.slug,
+    title: article.headline,
+    level,
+    topic: made.topic,
+    date: new Date().toISOString().slice(0, 10),
+    status: '완성',
+    sourceUrl: article.url,
+    audioUrl: article.audio.url,
+    note: made.note,
+    display: { date: false, credit: false },
+    article: { blocks: article.blocks },
+    vocabulary: made.vocabulary,
+    questions: made.questions,
+    writing: made.writing,
+  };
+
+  const path = join(DATA_DIR, `${article.slug}.json`);
+  writeFileSync(path, JSON.stringify(ws, null, 2) + '\n', 'utf8');
+  info(`워크시트 작성: ${basename(path)}`);
+
+  const { made: pdfs } = await buildOne(path);
+
+  let row;
+  try {
+    row = await notion.findRowByTitle(dbId, ws.title);
+  } catch {
+    row = await notion.createRow(dbId, ws);
+    info(`새 행을 만들었습니다: ${ws.title}`);
+  }
+  const uploads = {};
+  for (const [prop, pdfPath] of Object.entries(pdfs)) {
+    uploads[prop] = await notion.uploadFile(pdfPath);
+  }
+  await notion.attachFiles(row.id, uploads);
+  await notion.syncMeta(row.id, ws);
+  return { title: ws.title, url: row.url || '', level, source: article.url };
+}
+
+async function cmdRequests() {
+  const dbId = process.env.NOTION_DATABASE_ID || notion.DEFAULT_DATABASE_ID;
+  const reqDb = notion.REQUEST_DB_ID;
+  if (!reqDb) throw new Error('NOTION_REQUEST_DB_ID 가 없습니다. 요청 데이터베이스 ID 를 알려주세요.');
+
+  const reqs = await notion.pendingRequests(reqDb);
+  if (!reqs.length) {
+    console.log('\n처리할 요청이 없습니다.\n');
+    return;
+  }
+  console.log(`\n요청 ${reqs.length}건을 처리합니다.\n`);
+
+  let failed = 0;
+  for (const req of reqs) {
+    console.log(`📝 "${req.text}"`);
+    await notion.updateRequest(req.id, { status: '처리중' });
+    try {
+      const done = await handleOne(req, dbId);
+      await notion.updateRequest(req.id, {
+        status: '완료',
+        result: `${done.title} (${done.level}) 을 만들었습니다.\n${done.url}\n원문: ${done.source}`,
+      });
+      ok(`${done.title} — 완료  ${done.url}`);
+    } catch (e) {
+      failed++;
+      await notion.updateRequest(req.id, { status: '실패', result: e.message });
+      bad(e.message);
+    }
+    console.log('');
+  }
+  process.exitCode = failed ? 1 : 0;
+}
+
 // ---------- 진입점 ----------
 const [cmd, arg] = process.argv.slice(2);
-const run = { doctor: cmdDoctor, verify: cmdVerify, fetch: cmdFetch, build: cmdBuild, publish: cmdPublish }[cmd];
+const run = { doctor: cmdDoctor, verify: cmdVerify, fetch: cmdFetch, build: cmdBuild, publish: cmdPublish, requests: cmdRequests }[cmd];
 if (!run) {
   console.log(`사용법:
   node src/cli.js doctor              환경 점검 (Chrome·Notion 토큰·JSON 검사)\n  node src/cli.js verify              Notion 연결과 업로드까지 실제로 확인 (아무것도 첨부하지 않음)
   node src/cli.js fetch   <기사 URL>  기사 본문을 받아 초안 JSON 생성 (drafts/)\n  node src/cli.js build   [경로|all]  PDF 3종 생성 (Notion 없이도 동작)
-  node src/cli.js publish [경로|all]  생성 + Notion 파일 속성에 첨부`);
+  node src/cli.js publish [경로|all]  생성 + Notion 파일 속성에 첨부\n  node src/cli.js requests            노션에 올라온 생성 요청을 처리`);
   process.exit(1);
 }
 run(arg).catch((e) => { console.error(`\n❌ ${e.message}\n`); process.exit(1); });
