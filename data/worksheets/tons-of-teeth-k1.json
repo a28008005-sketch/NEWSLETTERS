@@ -1,0 +1,157 @@
+{
+  "id": "tons-of-teeth-k1",
+  "title": "Tons of Teeth",
+  "level": "K1",
+  "topic": "Animals",
+  "date": "2026-09-12",
+  "status": "완성",
+  "sourceUrl": "https://www.timeforkids.com/k1/tons-of-teeth-k1/",
+  "audioUrl": "https://www.timeforkids.com/k1/tons-of-teeth-k1/",
+  "note": "상어 종류별 이빨 모양과 먹이 방식을 사진으로 비교하는 K1 기사",
+  "display": {
+    "date": false,
+    "credit": false
+  },
+  "article": {
+    "blocks": [
+      {
+        "type": "image",
+        "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260501_small_flat_teeth.jpg?w=1024",
+        "alt": ""
+      },
+      {
+        "type": "text",
+        "text": "Sharks have different kinds of teeth. Many have rows of them. The teeth help sharks eat different foods. Check out these shark teeth."
+      },
+      {
+        "type": "heading",
+        "text": "Small, Flat Teeth"
+      },
+      {
+        "type": "text",
+        "text": "This is a nurse shark (above). Its teeth look almost flat. But its strong jaws can crush food."
+      },
+      {
+        "type": "heading",
+        "text": "Long, Sharp Teeth"
+      },
+      {
+        "type": "image",
+        "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260501_long_sharp_teeth.jpg?w=1024",
+        "alt": ""
+      },
+      {
+        "type": "text",
+        "text": "This is a blue shark. See its pointy teeth? They help this shark chew small fish or squid."
+      },
+      {
+        "type": "heading",
+        "text": "Giant Teeth"
+      },
+      {
+        "type": "image",
+        "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260501_giant_teeth.jpg?w=1024",
+        "alt": ""
+      },
+      {
+        "type": "text",
+        "text": "This great white shark eats big prey. So it has big teeth. They fall out and are replaced."
+      },
+      {
+        "type": "heading",
+        "text": "Big Shark, Small Teeth"
+      },
+      {
+        "type": "image",
+        "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260501_big_shark_small_teeth.jpg?w=1024",
+        "alt": ""
+      },
+      {
+        "type": "text",
+        "text": "This giant whale shark has tiny teeth. They do not bite or chew. These sharks are filter-feeders."
+      }
+    ]
+  },
+  "vocabulary": [
+    {
+      "word": "teeth",
+      "meaning": "이빨 (tooth 의 복수형)"
+    },
+    {
+      "word": "jaws",
+      "meaning": "턱"
+    },
+    {
+      "word": "crush",
+      "meaning": "으깨다, 부수다"
+    },
+    {
+      "word": "pointy",
+      "meaning": "뾰족한"
+    },
+    {
+      "word": "prey",
+      "meaning": "먹이"
+    }
+  ],
+  "questions": [
+    {
+      "type": "mc",
+      "q": "What is this story about?",
+      "choices": [
+        "Shark teeth",
+        "Bird nests",
+        "Fish eggs",
+        "Sea plants"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "mc",
+      "q": "Which shark has teeth that look almost flat?",
+      "choices": [
+        "A nurse shark",
+        "A blue shark",
+        "A great white shark",
+        "A whale shark"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "mc",
+      "q": "Which shark has the biggest teeth?",
+      "choices": [
+        "A great white shark",
+        "A nurse shark",
+        "A blue shark",
+        "A whale shark"
+      ],
+      "answer": 0
+    },
+    {
+      "type": "short",
+      "q": "What happens to a great white shark's teeth?",
+      "lines": 2,
+      "answer": "They fall out and are replaced.",
+      "note": "'새 이빨이 난다' 는 뜻이면 정답입니다."
+    },
+    {
+      "type": "short",
+      "q": "What do a blue shark's pointy teeth help it do?",
+      "lines": 2,
+      "answer": "They help it chew small fish or squid."
+    },
+    {
+      "type": "short",
+      "q": "Do whale sharks bite or chew with their teeth?",
+      "lines": 2,
+      "answer": "No. They are filter-feeders.",
+      "note": "'아니다' 만 써도 맞습니다. 이유까지 쓰면 더 좋습니다."
+    }
+  ],
+  "writing": {
+    "prompt": "Which shark's teeth surprised you? Write one sentence about it.",
+    "lines": 4,
+    "sample": "기사에 나온 상어 네 종류 중 하나를 고르고, 이빨 특징을 한 문장으로 썼는지 봐 주세요."
+  }
+}
