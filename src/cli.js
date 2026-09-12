@@ -304,6 +304,41 @@ async function cmdVerify() {
   process.exitCode = fail === 0 ? 0 : 1;
 }
 
+// ---------- discover ----------
+// 레벨 하나를 받아, 마스터 목록에 아직 없는 기사를 찾아 본문까지 받아 둔다.
+// 요청 데이터베이스가 없어도 되므로 통합에 추가 권한이 필요 없다.
+async function cmdDiscover(level) {
+  if (!level) throw new Error('레벨을 적어주세요. 예) node src/cli.js discover K1');
+  const want = levelFromText(level) || level;
+  const dbId = process.env.NOTION_DATABASE_ID || notion.DEFAULT_DATABASE_ID;
+
+  const used = await notion.usedSourceUrls(dbId);
+  info(`이미 만든 기사 ${used.length}건은 제외합니다.`);
+
+  const candidates = await findUnusedArticles(want, used, { log: (m) => info(m) });
+  if (!candidates.length) throw new Error(`${want} 에서 새 기사를 찾지 못했습니다.`);
+
+  console.log(`\n${want} 에서 아직 만들지 않은 기사 ${candidates.length}건:`);
+  candidates.slice(0, 10).forEach((u, i) => console.log(`  ${i + 1}. ${u}`));
+
+  // 맨 앞 기사는 바로 쓸 수 있게 본문까지 받아 둔다.
+  console.log('');
+  const article = await fetchArticle(candidates[0], { log: (m) => info(m) });
+  const path = writeDraft(article, join(ROOT, 'drafts'));
+  ok(`${article.headline} — 본문 ${article.blocks.filter((b) => b.type === 'text').length}문단, ` +
+     `사진 ${article.blocks.filter((b) => b.type === 'image').length}장, ` +
+     `음원 ${article.audio.found ? '확보' : '미확보'}`);
+  info(`초안: ${basename(path)}`);
+
+  console.log('\n───────── 본문 ─────────');
+  console.log(article.headline);
+  for (const b of article.blocks) {
+    if (b.type === 'heading') console.log(`\n[소제목] ${b.text}`);
+    else if (b.type === 'text') console.log(b.text);
+  }
+  console.log('────────────────────────\n');
+}
+
 // ---------- requests ----------
 // 노션 요청을 받아 기사를 고르고 본문을 받아 둔다.
 // 문항 쓰기는 사람의 판단이 필요한 유일한 단계라 여기서 멈춘다.
@@ -378,11 +413,12 @@ async function cmdRequests(sub) {
 
 // ---------- 진입점 ----------
 const [cmd, arg] = process.argv.slice(2);
-const run = { doctor: cmdDoctor, verify: cmdVerify, fetch: cmdFetch, build: cmdBuild, publish: cmdPublish, requests: cmdRequests }[cmd];
+const run = { doctor: cmdDoctor, verify: cmdVerify, discover: cmdDiscover, fetch: cmdFetch,
+              build: cmdBuild, publish: cmdPublish, requests: cmdRequests }[cmd];
 if (!run) {
   console.log(`사용법:
   node src/cli.js doctor              환경 점검 (Chrome·Notion 토큰·JSON 검사)\n  node src/cli.js verify              Notion 연결과 업로드까지 실제로 확인 (아무것도 첨부하지 않음)
-  node src/cli.js fetch   <기사 URL>  기사 본문을 받아 초안 JSON 생성 (drafts/)\n  node src/cli.js build   [경로|all]  PDF 3종 생성 (Notion 없이도 동작)
+  node src/cli.js discover <레벨>     해당 레벨에서 아직 안 만든 기사를 찾아 본문까지 확보\n  node src/cli.js fetch   <기사 URL>  기사 본문을 받아 초안 JSON 생성 (drafts/)\n  node src/cli.js build   [경로|all]  PDF 3종 생성 (Notion 없이도 동작)
   node src/cli.js publish [경로|all]  생성 + Notion 파일 속성에 첨부\n  node src/cli.js requests            노션 요청을 받아 기사를 고르고 본문 확보`);
   process.exit(1);
 }
