@@ -1,0 +1,100 @@
+{
+  "id": "tons-of-teeth-k1",
+  "title": "Tons of Teeth",
+  "level": "K1",
+  "topic": "Science",
+  "date": "2026-09-12",
+  "status": "진행중",
+  "sourceUrl": "https://www.timeforkids.com/k1/tons-of-teeth-k1/",
+  "note": "",
+  "audioUrl": "https://www.timeforkids.com/k1/tons-of-teeth-k1/",
+  "article": {
+    "blocks": [
+      {
+        "type": "image",
+        "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260501_small_flat_teeth.jpg?w=1024",
+        "alt": ""
+      },
+      {
+        "type": "text",
+        "text": "Sharks have different kinds of teeth. Many have rows of them. The teeth help sharks eat different foods. Check out these shark teeth."
+      },
+      {
+        "type": "heading",
+        "text": "Small, Flat Teeth"
+      },
+      {
+        "type": "text",
+        "text": "This is a nurse shark (above). Its teeth look almost flat. But its strong jaws can crush food."
+      },
+      {
+        "type": "heading",
+        "text": "Long, Sharp Teeth"
+      },
+      {
+        "type": "image",
+        "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260501_long_sharp_teeth.jpg?w=1024",
+        "alt": ""
+      },
+      {
+        "type": "text",
+        "text": "This is a blue shark. See its pointy teeth? They help this shark chew small fish or squid."
+      },
+      {
+        "type": "heading",
+        "text": "Giant Teeth"
+      },
+      {
+        "type": "image",
+        "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260501_giant_teeth.jpg?w=1024",
+        "alt": ""
+      },
+      {
+        "type": "text",
+        "text": "This great white shark eats big prey. So it has big teeth. They fall out and are replaced."
+      },
+      {
+        "type": "heading",
+        "text": "Big Shark, Small Teeth"
+      },
+      {
+        "type": "image",
+        "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260501_big_shark_small_teeth.jpg?w=1024",
+        "alt": ""
+      },
+      {
+        "type": "text",
+        "text": "This giant whale shark has tiny teeth. They do not bite or chew. These sharks are filter-feeders."
+      }
+    ],
+    "paragraphs": [
+      "Sharks have different kinds of teeth. Many have rows of them. The teeth help sharks eat different foods. Check out these shark teeth.",
+      "This is a nurse shark (above). Its teeth look almost flat. But its strong jaws can crush food.",
+      "This is a blue shark. See its pointy teeth? They help this shark chew small fish or squid.",
+      "This great white shark eats big prey. So it has big teeth. They fall out and are replaced.",
+      "This giant whale shark has tiny teeth. They do not bite or chew. These sharks are filter-feeders."
+    ],
+    "images": [
+      {
+        "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260501_small_flat_teeth.jpg?w=1024",
+        "alt": ""
+      },
+      {
+        "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260501_long_sharp_teeth.jpg?w=1024",
+        "alt": ""
+      },
+      {
+        "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260501_giant_teeth.jpg?w=1024",
+        "alt": ""
+      },
+      {
+        "url": "https://www.timeforkids.com/wp-content/uploads/2025/07/K1_260501_big_shark_small_teeth.jpg?w=1024",
+        "alt": ""
+      }
+    ],
+    "credit": "출처: https://www.timeforkids.com/k1/tons-of-teeth-k1/"
+  },
+  "vocabulary": [],
+  "questions": [],
+  "writing": null
+}
